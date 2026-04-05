@@ -1,19 +1,19 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
   Listing,
   ListingsQueryArgs,
   ListingsResponse,
   MeResponse,
   User,
-} from '../types';
+} from "../types";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/',
-  credentials: 'include',
+  baseUrl: "https://server-reseller.onrender.com/",
+  credentials: "include",
 });
 
 function listingImageSrc(url: string): string {
-  if (url.startsWith('http')) return url;
+  if (url.startsWith("http")) return url;
   return url;
 }
 
@@ -21,7 +21,7 @@ function parseListingsCacheKey(key: string): ListingsQueryArgs | undefined {
   const m = key.match(/^getListings\(([\s\S]*)\)$/);
   if (!m) return undefined;
   const inner = m[1].trim();
-  if (inner === 'undefined' || inner === '') return undefined;
+  if (inner === "undefined" || inner === "") return undefined;
   try {
     return JSON.parse(inner) as ListingsQueryArgs;
   } catch {
@@ -31,42 +31,50 @@ function parseListingsCacheKey(key: string): ListingsQueryArgs | undefined {
 
 function forEachListingsCache(
   queries: Record<string, unknown>,
-  fn: (args: ListingsQueryArgs | undefined) => void
+  fn: (args: ListingsQueryArgs | undefined) => void,
 ) {
   for (const key of Object.keys(queries)) {
-    if (!key.startsWith('getListings(')) continue;
+    if (!key.startsWith("getListings(")) continue;
     fn(parseListingsCacheKey(key));
   }
 }
 
 export const api = createApi({
-  reducerPath: 'api',
+  reducerPath: "api",
   baseQuery,
-  tagTypes: ['Listing', 'Listings', 'Mine', 'Stats', 'Auth', 'Categories', 'Billing'],
+  tagTypes: [
+    "Listing",
+    "Listings",
+    "Mine",
+    "Stats",
+    "Auth",
+    "Categories",
+    "Billing",
+  ],
   endpoints: (builder) => ({
     getCategories: builder.query<{ categories: string[] }, void>({
-      query: () => 'api/categories',
-      providesTags: ['Categories'],
+      query: () => "api/categories",
+      providesTags: ["Categories"],
     }),
 
     getCurrencies: builder.query<{ currencies: string[] }, void>({
-      query: () => 'api/currencies',
-      providesTags: ['Categories'],
+      query: () => "api/currencies",
+      providesTags: ["Categories"],
     }),
 
     getMe: builder.query<MeResponse, void>({
-      query: () => 'api/auth/me',
-      providesTags: ['Auth'],
+      query: () => "api/auth/me",
+      providesTags: ["Auth"],
     }),
 
     login: builder.mutation<MeResponse, { email: string; password: string }>({
       query: (body) => ({
-        url: 'api/auth/login',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        url: "api/auth/login",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
-      invalidatesTags: ['Auth', 'Mine', 'Stats'],
+      invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
     register: builder.mutation<
@@ -74,20 +82,20 @@ export const api = createApi({
       { email: string; password: string; name: string }
     >({
       query: (body) => ({
-        url: 'api/auth/register',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        url: "api/auth/register",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
-      invalidatesTags: ['Auth', 'Mine', 'Stats'],
+      invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
     logout: builder.mutation<{ ok: boolean }, void>({
       query: () => ({
-        url: 'api/auth/logout',
-        method: 'POST',
+        url: "api/auth/logout",
+        method: "POST",
       }),
-      invalidatesTags: ['Auth', 'Mine', 'Stats', 'Billing'],
+      invalidatesTags: ["Auth", "Mine", "Stats", "Billing"],
     }),
 
     purchaseProduct: builder.mutation<
@@ -100,32 +108,32 @@ export const api = createApi({
       { productId: string }
     >({
       query: (body) => ({
-        url: 'api/billing/purchase',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        url: "api/billing/purchase",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
-      invalidatesTags: ['Auth', 'Billing'],
+      invalidatesTags: ["Auth", "Billing"],
     }),
 
     getListings: builder.query<ListingsResponse, ListingsQueryArgs | void>({
       query: (args) => {
         const p = new URLSearchParams();
-        if (args?.category) p.set('category', args.category);
-        if (args?.minPrice) p.set('minPrice', args.minPrice);
-        if (args?.maxPrice) p.set('maxPrice', args.maxPrice);
-        if (args?.sort) p.set('sort', args.sort);
-        if (args?.page) p.set('page', String(args.page));
-        if (args?.limit) p.set('limit', String(args.limit));
+        if (args?.category) p.set("category", args.category);
+        if (args?.minPrice) p.set("minPrice", args.minPrice);
+        if (args?.maxPrice) p.set("maxPrice", args.maxPrice);
+        if (args?.sort) p.set("sort", args.sort);
+        if (args?.page) p.set("page", String(args.page));
+        if (args?.limit) p.set("limit", String(args.limit));
         const qs = p.toString();
-        return `api/listings${qs ? `?${qs}` : ''}`;
+        return `api/listings${qs ? `?${qs}` : ""}`;
       },
       transformResponse: (res: ListingsResponse) => ({
         ...res,
         listings: res.listings.map((l) => ({
           ...l,
           id: String(l.id),
-          currency: l.currency || 'USD',
+          currency: l.currency || "USD",
           featured: Boolean(l.featured),
           images: (l.images || []).map(listingImageSrc),
         })),
@@ -133,10 +141,13 @@ export const api = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.listings.map((l) => ({ type: 'Listing' as const, id: l.id })),
-              { type: 'Listings' as const, id: 'LIST' },
+              ...result.listings.map((l) => ({
+                type: "Listing" as const,
+                id: l.id,
+              })),
+              { type: "Listings" as const, id: "LIST" },
             ]
-          : [{ type: 'Listings', id: 'LIST' }],
+          : [{ type: "Listings", id: "LIST" }],
     }),
 
     getListing: builder.query<{ listing: Listing }, string>({
@@ -145,21 +156,21 @@ export const api = createApi({
         listing: {
           ...res.listing,
           id: String(res.listing.id),
-          currency: res.listing.currency || 'USD',
+          currency: res.listing.currency || "USD",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },
       }),
-      providesTags: (_r, _e, id) => [{ type: 'Listing', id }],
+      providesTags: (_r, _e, id) => [{ type: "Listing", id }],
     }),
 
     getMine: builder.query<{ listings: Listing[] }, void>({
-      query: () => 'api/listings/mine',
+      query: () => "api/listings/mine",
       transformResponse: (res: { listings: Listing[] }) => ({
         listings: res.listings.map((l) => ({
           ...l,
           id: String(l.id),
-          currency: l.currency || 'USD',
+          currency: l.currency || "USD",
           featured: Boolean(l.featured),
           images: (l.images || []).map(listingImageSrc),
         })),
@@ -167,47 +178,50 @@ export const api = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.listings.map((l) => ({ type: 'Listing' as const, id: l.id })),
-              { type: 'Mine' as const, id: 'MINE' },
+              ...result.listings.map((l) => ({
+                type: "Listing" as const,
+                id: l.id,
+              })),
+              { type: "Mine" as const, id: "MINE" },
             ]
-          : [{ type: 'Mine', id: 'MINE' }],
+          : [{ type: "Mine", id: "MINE" }],
     }),
 
     getDashboardStats: builder.query<
       { listingCount: number; totalViews: number; totalContactClicks: number },
       void
     >({
-      query: () => 'api/listings/dashboard-stats',
-      providesTags: ['Stats'],
+      query: () => "api/listings/dashboard-stats",
+      providesTags: ["Stats"],
     }),
 
     recordView: builder.mutation<{ views: number }, string>({
       query: (id) => ({
         url: `api/listings/${id}/view`,
-        method: 'POST',
+        method: "POST",
       }),
-      invalidatesTags: (_r, _e, id) => [{ type: 'Listing', id }],
+      invalidatesTags: (_r, _e, id) => [{ type: "Listing", id }],
     }),
 
     recordContactClick: builder.mutation<{ contactClicks: number }, string>({
       query: (id) => ({
         url: `api/listings/${id}/contact-click`,
-        method: 'POST',
+        method: "POST",
       }),
-      invalidatesTags: (_r, _e, id) => [{ type: 'Listing', id }],
+      invalidatesTags: (_r, _e, id) => [{ type: "Listing", id }],
     }),
 
     createListing: builder.mutation<{ listing: Listing }, FormData>({
       query: (body) => ({
-        url: 'api/listings',
-        method: 'POST',
+        url: "api/listings",
+        method: "POST",
         body,
       }),
       transformResponse: (res: { listing: Listing }) => ({
         listing: {
           ...res.listing,
           id: String(res.listing.id),
-          currency: res.listing.currency || 'USD',
+          currency: res.listing.currency || "USD",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },
@@ -221,48 +235,48 @@ export const api = createApi({
         forEachListingsCache(queries, (args) => {
           patches.push(
             dispatch(
-              api.util.updateQueryData('getListings', args, (draft) => {
+              api.util.updateQueryData("getListings", args, (draft) => {
                 if (!draft?.listings) return;
                 const optimistic: Listing = {
                   id: tempId,
-                  title: 'Posting…',
-                  description: '',
+                  title: "Posting…",
+                  description: "",
                   price: 0,
-                  currency: 'USD',
-                  category: 'other',
+                  currency: "USD",
+                  category: "other",
                   featured: false,
                   images: [],
-                  contact: { phone: '', whatsapp: '', email: '' },
+                  contact: { phone: "", whatsapp: "", email: "" },
                   views: 0,
                   contactClicks: 0,
                   createdAt: new Date().toISOString(),
                 };
                 draft.listings.unshift(optimistic);
-              })
-            )
+              }),
+            ),
           );
         });
 
         patches.push(
           dispatch(
-            api.util.updateQueryData('getMine', undefined, (draft) => {
+            api.util.updateQueryData("getMine", undefined, (draft) => {
               if (!draft?.listings) return;
               draft.listings.unshift({
                 id: tempId,
-                title: 'Posting…',
-                description: '',
+                title: "Posting…",
+                description: "",
                 price: 0,
-                currency: 'USD',
-                category: 'other',
+                currency: "USD",
+                category: "other",
                 featured: false,
                 images: [],
-                contact: { phone: '', whatsapp: '', email: '' },
+                contact: { phone: "", whatsapp: "", email: "" },
                 views: 0,
                 contactClicks: 0,
                 createdAt: new Date().toISOString(),
               });
-            })
-          )
+            }),
+          ),
         );
 
         try {
@@ -270,54 +284,57 @@ export const api = createApi({
           const real = data.listing;
           forEachListingsCache(queries, (args) => {
             dispatch(
-              api.util.updateQueryData('getListings', args, (draft) => {
+              api.util.updateQueryData("getListings", args, (draft) => {
                 if (!draft?.listings) return;
                 const i = draft.listings.findIndex((l) => l.id === tempId);
                 if (i >= 0) draft.listings[i] = real;
-              })
+              }),
             );
           });
           dispatch(
-            api.util.updateQueryData('getMine', undefined, (draft) => {
+            api.util.updateQueryData("getMine", undefined, (draft) => {
               if (!draft?.listings) return;
               const i = draft.listings.findIndex((l) => l.id === tempId);
               if (i >= 0) draft.listings[i] = real;
-            })
+            }),
           );
-          dispatch(api.util.invalidateTags(['Stats']));
+          dispatch(api.util.invalidateTags(["Stats"]));
         } catch {
           [...patches].reverse().forEach((p) => p.undo());
         }
       },
     }),
 
-    updateListing: builder.mutation<{ listing: Listing }, { id: string; body: FormData }>({
+    updateListing: builder.mutation<
+      { listing: Listing },
+      { id: string; body: FormData }
+    >({
       query: ({ id, body }) => ({
         url: `api/listings/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body,
       }),
       transformResponse: (res: { listing: Listing }) => ({
         listing: {
           ...res.listing,
           id: String(res.listing.id),
-          currency: res.listing.currency || 'USD',
+          currency: res.listing.currency || "USD",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },
       }),
       invalidatesTags: (_r, _e, { id }) => [
-        { type: 'Listing', id },
-        { type: 'Listings', id: 'LIST' },
-        { type: 'Mine', id: 'MINE' },
-        'Stats',
+        { type: "Listing", id },
+        { type: "Listings", id: "LIST" },
+        { type: "Mine", id: "MINE" },
+        "Stats",
       ],
     }),
 
     deleteListing: builder.mutation<{ ok: boolean }, string>({
       query: (id) => ({
         url: `api/listings/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
       async onQueryStarted(id, { dispatch, queryFulfilled, getState }) {
         const patches: { undo: () => void }[] = [];
@@ -327,27 +344,27 @@ export const api = createApi({
         forEachListingsCache(queries, (args) => {
           patches.push(
             dispatch(
-              api.util.updateQueryData('getListings', args, (draft) => {
+              api.util.updateQueryData("getListings", args, (draft) => {
                 if (!draft?.listings) return;
                 draft.listings = draft.listings.filter((l) => l.id !== id);
                 draft.total = Math.max(0, draft.total - 1);
-              })
-            )
+              }),
+            ),
           );
         });
 
         patches.push(
           dispatch(
-            api.util.updateQueryData('getMine', undefined, (draft) => {
+            api.util.updateQueryData("getMine", undefined, (draft) => {
               if (!draft?.listings) return;
               draft.listings = draft.listings.filter((l) => l.id !== id);
-            })
-          )
+            }),
+          ),
         );
 
         try {
           await queryFulfilled;
-          dispatch(api.util.invalidateTags([{ type: 'Listing', id }, 'Stats']));
+          dispatch(api.util.invalidateTags([{ type: "Listing", id }, "Stats"]));
         } catch {
           [...patches].reverse().forEach((p) => p.undo());
         }
