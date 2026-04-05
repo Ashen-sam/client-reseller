@@ -1,0 +1,73 @@
+export type UserRole = 'user' | 'admin';
+
+export interface BillingProduct {
+  id: string;
+  name: string;
+  description: string;
+  priceLkr: number;
+}
+
+export interface AccountLimits {
+  maxImagesPerListing: number;
+  freeMaxImages: number;
+  imagePackPriceLkr: number;
+  featuredTokenPriceLkr: number;
+  products: BillingProduct[];
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  listingImagePackPurchased: boolean;
+  featuredTokens: number;
+}
+
+export interface MeResponse {
+  user: User;
+  limits: AccountLimits;
+}
+
+export interface SellerRef {
+  id: string;
+  name?: string;
+  email?: string;
+}
+
+export interface Listing {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  currency: string;
+  category: string;
+  featured?: boolean;
+  images: string[];
+  contact: {
+    phone: string;
+    whatsapp: string;
+    email: string;
+  };
+  seller?: SellerRef | null;
+  views: number;
+  contactClicks: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ListingsResponse {
+  listings: Listing[];
+  total: number;
+  page: number;
+  pages: number;
+}
+
+export interface ListingsQueryArgs {
+  category?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sort?: 'latest' | 'popular';
+  page?: number;
+  limit?: number;
+}
