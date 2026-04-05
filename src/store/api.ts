@@ -7,13 +7,40 @@ import type {
   User,
 } from "../types";
 
+/**
+ * Dev: `/` + Vite proxy → local API.
+ * Prod: `VITE_API_URL` if set, else Render API (deployed SPA default).
+ */
+function getApiBaseUrl(): string {
+  const raw = import.meta.env.VITE_API_URL;
+  if (raw != null && String(raw).trim() !== "") {
+    return String(raw).replace(/\/+$/, "") + "/";
+  }
+  if (import.meta.env.DEV) {
+    return "/";
+  }
+  return "https://server-reseller.onrender.com/";
+}
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://server-reseller.onrender.com/",
+  baseUrl: getApiBaseUrl(),
   credentials: "include",
 });
 
+function apiOriginForStaticFiles(): string {
+  const base = getApiBaseUrl();
+  if (base.startsWith("/")) {
+    return typeof window !== "undefined" ? window.location.origin : "";
+  }
+  return base.replace(/\/+$/, "");
+}
+
 function listingImageSrc(url: string): string {
   if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) {
+    const origin = apiOriginForStaticFiles();
+    return origin ? `${origin}${url}` : url;
+  }
   return url;
 }
 
