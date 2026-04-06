@@ -57,21 +57,34 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
   return result;
 };
 
-function apiOriginForStaticFiles(): string {
-  const base = getApiBaseUrl();
-  if (base.startsWith("/")) {
-    return typeof window !== "undefined" ? window.location.origin : "";
+/**
+ * Where `/uploads/...` files live (same host as the API). In production this must NOT be the
+ * Vercel SPA origin — uploads are served by Express on Render (or your API host).
+ */
+function getAssetBaseOrigin(): string {
+  const raw = import.meta.env.VITE_API_URL;
+  const trimmed = raw != null ? String(raw).trim() : "";
+  if (trimmed && /^https?:\/\//i.test(trimmed)) {
+    try {
+      return new URL(trimmed).origin;
+    } catch {
+      /* fall through */
+    }
   }
-  return base.replace(/\/+$/, "");
+  if (import.meta.env.DEV && typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return "https://server-reseller.onrender.com";
 }
 
 function listingImageSrc(url: string): string {
   if (url == null || typeof url !== "string") return url;
   const trimmed = url.trim();
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
   const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  const origin = apiOriginForStaticFiles();
-  return origin ? `${origin}${path}` : path;
+  const origin = getAssetBaseOrigin();
+  return `${origin}${path}`;
 }
 
 function parseListingsCacheKey(key: string): ListingsQueryArgs | undefined {
