@@ -7,7 +7,7 @@ import type {
   MeResponse,
   User,
 } from "../types";
-import { clearAuthToken, getAuthToken } from "../lib/authToken";
+import { clearAuthToken, getAuthToken, setAuthToken } from "../lib/authToken";
 
 /**
  * Dev: `/` + Vite proxy → local API.
@@ -46,7 +46,11 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
   const result = await rawBaseQuery(args, api, extraOptions);
   if (result.error?.status === 401) {
     const u = requestUrl(args);
-    if (!u.includes("auth/login") && !u.includes("auth/register")) {
+    if (
+      !u.includes("auth/login") &&
+      !u.includes("auth/register") &&
+      !u.includes("auth/me")
+    ) {
       clearAuthToken();
     }
   }
@@ -115,9 +119,24 @@ export const api = createApi({
       providesTags: ["Categories"],
     }),
 
-    getMe: builder.query<MeResponse, void>({
-      query: () => "api/auth/me",
-      providesTags: ["Auth"],
+    getMe: builder.query<MeResponse | null, void>({
+      query: () => ({
+        url: "api/auth/me",
+        validateStatus: (response) => response.status === 200 || response.status === 401,
+      }),
+      transformResponse: (response: unknown, meta: { response?: Response } | undefined) => {
+        const status = meta?.response?.status;
+        if (status === 401) {
+          clearAuthToken();
+          return null;
+        }
+        const body = response as { user?: unknown } | null;
+        if (body && typeof body === "object" && body.user) {
+          return response as MeResponse;
+        }
+        return null;
+      },
+      providesTags: (result) => (result?.user ? ["Auth"] : []),
     }),
 
     login: builder.mutation<MeResponse, { email: string; password: string }>({
@@ -127,6 +146,14 @@ export const api = createApi({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
+      async onQueryStarted(_arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.token) setAuthToken(data.token);
+        } catch {
+          /* invalid login */
+        }
+      },
       invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
@@ -140,6 +167,14 @@ export const api = createApi({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
+      async onQueryStarted(_arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.token) setAuthToken(data.token);
+        } catch {
+          /* registration failed */
+        }
+      },
       invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
