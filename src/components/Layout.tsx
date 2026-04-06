@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { api, useLogoutMutation, useGetMeQuery } from '../store/api';
 import { clearAuth } from '../store/authSlice';
+import { clearAuthToken } from '../lib/authToken';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     try {
       await logout().unwrap();
     } finally {
+      clearAuthToken();
       dispatch(api.util.resetApiState());
       dispatch(clearAuth());
     }

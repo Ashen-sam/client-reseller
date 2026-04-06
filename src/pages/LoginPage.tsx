@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useLoginMutation, useGetMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
+import { setAuthToken } from '../lib/authToken';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
+      if (res.token) setAuthToken(res.token);
       dispatch(setSession({ user: res.user, limits: res.limits }));
     } catch {
       /* handled below */

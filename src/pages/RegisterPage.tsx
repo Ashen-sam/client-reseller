@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useRegisterMutation, useGetMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
+import { setAuthToken } from '../lib/authToken';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       const res = await register({ email, password, name }).unwrap();
+      if (res.token) setAuthToken(res.token);
       dispatch(setSession({ user: res.user, limits: res.limits }));
     } catch {
       /* handled */

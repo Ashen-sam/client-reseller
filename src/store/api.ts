@@ -1,3 +1,4 @@
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
   Listing,
@@ -6,6 +7,7 @@ import type {
   MeResponse,
   User,
 } from "../types";
+import { clearAuthToken, getAuthToken } from "../lib/authToken";
 
 /**
  * Dev: `/` + Vite proxy → local API.
@@ -22,10 +24,34 @@ function getApiBaseUrl(): string {
   return "https://server-reseller.onrender.com/";
 }
 
-const baseQuery = fetchBaseQuery({
+const rawBaseQuery = fetchBaseQuery({
   baseUrl: getApiBaseUrl(),
   credentials: "include",
+  prepareHeaders: (headers) => {
+    const t = getAuthToken();
+    if (t) headers.set("Authorization", `Bearer ${t}`);
+    return headers;
+  },
 });
+
+function requestUrl(args: string | FetchArgs): string {
+  return typeof args === "string" ? args : (args.url ?? "");
+}
+
+const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+  args,
+  api,
+  extraOptions,
+) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+  if (result.error?.status === 401) {
+    const u = requestUrl(args);
+    if (!u.includes("auth/login") && !u.includes("auth/register")) {
+      clearAuthToken();
+    }
+  }
+  return result;
+};
 
 function apiOriginForStaticFiles(): string {
   const base = getApiBaseUrl();
@@ -36,12 +62,12 @@ function apiOriginForStaticFiles(): string {
 }
 
 function listingImageSrc(url: string): string {
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/")) {
-    const origin = apiOriginForStaticFiles();
-    return origin ? `${origin}${url}` : url;
-  }
-  return url;
+  if (url == null || typeof url !== "string") return url;
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  const origin = apiOriginForStaticFiles();
+  return origin ? `${origin}${path}` : path;
 }
 
 function parseListingsCacheKey(key: string): ListingsQueryArgs | undefined {

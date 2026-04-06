@@ -27,6 +27,8 @@ export interface User {
 export interface MeResponse {
   user: User;
   limits: AccountLimits;
+  /** Present on login/register — used when API is on another origin than the SPA. */
+  token?: string;
 }
 
 export interface SellerRef {
