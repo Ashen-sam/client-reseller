@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
@@ -7,14 +7,16 @@ import { setAuthToken } from '../lib/authToken';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string; registered?: boolean } | null)?.from ?? '/';
-  const { data: me, isLoading, isFetching } = useGetMeQuery();
+  const { data: me, isLoading } = useGetMeQuery();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading: submitting, error }] = useLoginMutation();
 
-  if (isLoading || isFetching) {
+  /* Only block on first load — not on getMe refetch after login (isFetching), or we trap the UI and skip redirect. */
+  if (isLoading) {
     return (
       <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
         <p className="text-muted">Loading…</p>
@@ -32,6 +34,7 @@ export default function LoginPage() {
       const res = await login({ email, password }).unwrap();
       if (res.token) setAuthToken(res.token);
       dispatch(setSession({ user: res.user, limits: res.limits }));
+      navigate(from, { replace: true });
     } catch {
       /* handled below */
     }
