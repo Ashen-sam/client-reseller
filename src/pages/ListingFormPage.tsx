@@ -16,7 +16,11 @@ type Mode = 'create' | 'edit';
 function errMessage(e: unknown): string {
   if (e && typeof e === 'object' && 'data' in e) {
     const d = (e as FetchBaseQueryError).data;
-    if (d && typeof d === 'object' && 'message' in d) return String((d as { message: string }).message);
+    if (d && typeof d === 'object' && 'message' in d) {
+      const msg = String((d as { message: string }).message);
+      const detail = (d as { detail?: string }).detail;
+      return detail ? `${msg} (${detail})` : msg;
+    }
   }
   return 'Something went wrong.';
 }
