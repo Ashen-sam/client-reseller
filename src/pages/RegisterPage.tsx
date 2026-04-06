@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useRegisterMutation, useGetMeQuery } from '../store/api';
-import { useAppDispatch } from '../store/hooks';
-import { setSession } from '../store/authSlice';
-import { setAuthToken } from '../lib/authToken';
 
 export default function RegisterPage() {
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { data: me, isLoading, isFetching } = useGetMeQuery();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,15 +19,14 @@ export default function RegisterPage() {
   }
 
   if (me?.user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const res = await register({ email, password, name }).unwrap();
-      if (res.token) setAuthToken(res.token);
-      dispatch(setSession({ user: res.user, limits: res.limits }));
+      await register({ email, password, name }).unwrap();
+      navigate('/login', { replace: true, state: { registered: true } });
     } catch {
       /* handled */
     }

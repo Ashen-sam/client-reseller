@@ -8,7 +8,7 @@ import { setAuthToken } from '../lib/authToken';
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+  const from = (location.state as { from?: string; registered?: boolean } | null)?.from ?? '/';
   const { data: me, isLoading, isFetching } = useGetMeQuery();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,6 +59,11 @@ export default function LoginPage() {
         New here? <Link to="/register">Create an account</Link>
       </p>
       <form className="auth-card" onSubmit={onSubmit} style={{ display: 'grid', gap: '1rem' }}>
+        {(location.state as { registered?: boolean } | null)?.registered && (
+          <div className="success-banner" role="status">
+            Account created. Sign in with your email and password.
+          </div>
+        )}
         {error && <div className="error-banner">{msg}</div>}
         <div className="field">
           <label htmlFor="email">Email</label>

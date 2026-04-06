@@ -167,14 +167,6 @@ export const api = createApi({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
-      async onQueryStarted(_arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data.token) setAuthToken(data.token);
-        } catch {
-          /* registration failed */
-        }
-      },
       invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
