@@ -26,22 +26,8 @@ export default function LoginPage() {
   if (isSignedIn && me?.user) return <Navigate to="/" replace />;
 
   return (
-    <div className="container auth-page">
-      <header className="page-surface page-surface--auth">
-        <div className="page-surface__inner">
-          <p className="page-header-eyebrow">Welcome back</p>
-          <h1 className="page-header-title" style={{ fontSize: 'var(--text-2xl)' }}>
-            Log in
-          </h1>
-          <p className="page-header-subtitle" style={{ margin: '0 auto', maxWidth: '22rem' }}>
-            Access your dashboard and listings.
-          </p>
-        </div>
-      </header>
-      <p className="text-muted" style={{ marginTop: 0, marginBottom: '1.25rem', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
-        Secure sign in powered by Clerk.
-      </p>
-      <div className="auth-card">
+    <div className="container auth-page auth-page--clerk-only">
+      <div className="auth-card auth-card--clerk-only">
         <SignIn
           path="/login"
           routing="path"

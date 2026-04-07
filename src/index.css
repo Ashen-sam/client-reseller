@@ -1507,6 +1507,14 @@ img {
   padding: 0 0.5rem;
 }
 
+.auth-page--clerk-only {
+  max-width: 480px;
+  min-height: calc(100vh - 7rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .auth-page__title {
   margin: 0 0 0.5rem;
   font-size: var(--text-2xl);
@@ -1520,6 +1528,11 @@ img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
+}
+
+.auth-card--clerk-only {
+  width: min(100%, 420px);
+  padding: 1rem;
 }
 
 .clerk-root-box {
@@ -1537,6 +1550,12 @@ img {
   border: none !important;
   background: transparent !important;
   margin: 0 auto;
+}
+
+.clerk-root-box .cl-card {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
 }
 
 .clerk-link {

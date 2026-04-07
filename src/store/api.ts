@@ -7,7 +7,7 @@ import type {
   MeResponse,
   User,
 } from "../types";
-import { clearAuthToken, getAuthToken } from "../lib/authToken";
+import { clearAuthToken } from "../lib/authToken";
 import { getClerkToken } from "../lib/clerkToken";
 
 /**
@@ -41,8 +41,7 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
 ) => {
   const originalUrl = requestUrl(args);
   const clerkToken = await getClerkToken();
-  const fallbackToken = getAuthToken();
-  const authToken = clerkToken || fallbackToken;
+  const authToken = clerkToken;
   const withAuth: string | FetchArgs =
     typeof args === "string"
       ? { url: args, headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined }
