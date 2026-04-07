@@ -195,6 +195,31 @@ export const api = createApi({
       invalidatesTags: ["Auth", "Mine", "Stats", "Billing"],
     }),
 
+    updateProfile: builder.mutation<
+      MeResponse,
+      { name: string; email: string; phone?: string }
+    >({
+      query: (body) => ({
+        url: "api/auth/profile",
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    changePassword: builder.mutation<
+      { ok: boolean },
+      { currentPassword: string; newPassword: string }
+    >({
+      query: (body) => ({
+        url: "api/auth/password",
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    }),
+
     purchaseProduct: builder.mutation<
       {
         ok: boolean;
@@ -485,6 +510,8 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
   useGetListingsQuery,
   useGetListingQuery,
   useGetMineQuery,

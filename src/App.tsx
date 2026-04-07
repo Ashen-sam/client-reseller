@@ -13,6 +13,7 @@ import DashboardPage from './pages/DashboardPage';
 import ListingFormPage from './pages/ListingFormPage';
 import AdminPage from './pages/AdminPage';
 import BillingPage from './pages/BillingPage';
+import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -70,6 +71,14 @@ export default function App() {
           element={
             <ProtectedRoute admin>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

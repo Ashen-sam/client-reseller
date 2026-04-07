@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { CreditCard, LayoutDashboard, LogIn, LogOut, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
+import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { api, useLogoutMutation, useGetMeQuery } from '../store/api';
 import { clearAuth } from '../store/authSlice';
@@ -89,6 +89,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <span className="ui-icon-label"><LayoutDashboard size={16} />Dashboard</span>
                 </NavLink>
                 <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
+                  }
+                >
+                  <span className="ui-icon-label"><Settings size={16} />Profile</span>
+                </NavLink>
+                <NavLink
                   to="/billing"
                   className={({ isActive }) =>
                     `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
@@ -169,6 +177,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </NavLink>
               <NavLink to="/billing" className={linkClass} onClick={() => setMenuOpen(false)}>
                 <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
+              </NavLink>
+              <NavLink to="/profile" className={linkClass} onClick={() => setMenuOpen(false)}>
+                <span className="ui-icon-label"><Settings size={16} />Profile</span>
               </NavLink>
               {user.role === 'admin' && (
                 <NavLink to="/admin" className={linkClass} onClick={() => setMenuOpen(false)}>

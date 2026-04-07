@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BarChart3, CreditCard, Eye, MousePointerClick, PenSquare, PlusCircle, Trash2, Wrench } from 'lucide-react';
+import { BarChart3, CreditCard, Eye, MousePointerClick, PenSquare, PlusCircle, Settings, Trash2, Wrench } from 'lucide-react';
 import {
   useGetMineQuery,
   useGetDashboardStatsQuery,
@@ -33,6 +33,9 @@ export default function DashboardPage() {
         <div className="dashboard-shell__actions">
           <Link to="/billing" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
             <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
+          </Link>
+          <Link to="/profile" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
+            <span className="ui-icon-label"><Settings size={16} />Profile</span>
           </Link>
           <Link to="/sell" className="btn btn-primary" style={{ textDecoration: 'none' }}>
             <span className="ui-icon-label"><PlusCircle size={16} />New listing</span>
