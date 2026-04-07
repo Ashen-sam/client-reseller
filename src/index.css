@@ -1525,6 +1525,9 @@ img {
 /* —— Auth —— */
 .auth-page {
   width: 100%;
+  min-height: calc(100vh - var(--header-h) - 9rem);
+  display: grid;
+  align-items: center;
 }
 
 .auth-page__title {
@@ -1543,7 +1546,8 @@ img {
 }
 
 .auth-shell {
-  margin-top: 1.5rem;
+  width: min(980px, 100%);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
@@ -1700,6 +1704,9 @@ img {
 @media (max-width: 900px) {
   .auth-shell {
     grid-template-columns: 1fr;
+  }
+  .auth-page {
+    min-height: auto;
   }
 }
 
