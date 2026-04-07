@@ -112,6 +112,10 @@ function forEachListingsCache(
 export const api = createApi({
   reducerPath: "api",
   baseQuery,
+  // Keep cached data longer to avoid refetch churn during navigation.
+  keepUnusedDataFor: 120,
+  refetchOnFocus: false,
+  refetchOnReconnect: true,
   tagTypes: [
     "Listing",
     "Listings",

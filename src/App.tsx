@@ -17,9 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { data, error, isSuccess } = useGetMeQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, error, isSuccess } = useGetMeQuery();
 
   useEffect(() => {
     if (isSuccess && data?.user && data.limits) {
