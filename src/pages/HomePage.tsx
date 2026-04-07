@@ -9,6 +9,7 @@ function catLabel(c: string) {
 }
 
 export default function HomePage() {
+  const [type, setType] = useState<'product' | 'service' | ''>('');
   const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -18,12 +19,13 @@ export default function HomePage() {
   const queryArgs = useMemo(
     () => ({
       category: category || undefined,
+      type: (type || undefined) as 'product' | 'service' | undefined,
       minPrice: minPrice || undefined,
       maxPrice: maxPrice || undefined,
       sort,
       page,
     }),
-    [category, minPrice, maxPrice, sort, page]
+    [category, type, minPrice, maxPrice, sort, page]
   );
 
   const { data, isLoading, isFetching, error } = useGetListingsQuery(queryArgs);
@@ -37,7 +39,7 @@ export default function HomePage() {
         <div className="page-surface__inner marketplace-hero__inner">
           <p className="marketplace-hero__eyebrow">Reseller marketplace</p>
           <h1 id="marketplace-heading" className="marketplace-hero__title">
-            Discover products from independent sellers
+            Discover products and services from independent sellers
           </h1>
           <p className="marketplace-hero__subtitle">
             Shop by category, compare prices in the seller’s currency, and message them directly — the same flow you
@@ -89,6 +91,21 @@ export default function HomePage() {
         <div className="filters-panel__head">
           <h2 className="filters-panel__head-title">Find what you need</h2>
           <p className="filters-panel__head-sub">Filter by category, price range, and sort order.</p>
+        </div>
+        <div className="field">
+          <label htmlFor="type">Type</label>
+          <select
+            id="type"
+            value={type}
+            onChange={(e) => {
+              setPage(1);
+              setType(e.target.value as 'product' | 'service' | '');
+            }}
+          >
+            <option value="">All types</option>
+            <option value="product">Products</option>
+            <option value="service">Services</option>
+          </select>
         </div>
         <div className="field">
           <label htmlFor="cat">Category</label>

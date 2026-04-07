@@ -16,15 +16,26 @@ export default function DashboardPage() {
 
   const limits = me?.limits;
   const maxImg = limits?.maxImagesPerListing ?? 3;
+  const listings = mine?.listings ?? [];
 
   return (
     <div className="container">
-      <header className="page-surface page-surface--page-header page-surface--split">
-        <Avatar name={me?.user?.name ?? 'You'} seed={me?.user?.id} size="lg" />
-        <div className="page-surface__grow">
-          <p className="page-header-eyebrow">Your account</p>
-          <h1 className="page-header-title">Dashboard</h1>
-          <p className="page-header-subtitle">Track your listings and how buyers engage with them.</p>
+      <header className="page-surface page-surface--page-header dashboard-shell__header">
+        <div className="dashboard-shell__identity">
+          <Avatar name={me?.user?.name ?? 'You'} seed={me?.user?.id} size="lg" />
+          <div className="page-surface__grow">
+            <p className="page-header-eyebrow">Seller workspace</p>
+            <h1 className="page-header-title">Dashboard</h1>
+            <p className="page-header-subtitle">Manage products and services, and track buyer engagement.</p>
+          </div>
+        </div>
+        <div className="dashboard-shell__actions">
+          <Link to="/billing" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
+            Billing
+          </Link>
+          <Link to="/sell" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+            New listing
+          </Link>
         </div>
       </header>
 
@@ -45,9 +56,7 @@ export default function DashboardPage() {
               </>
             ) : null}
           </div>
-          <Link to="/billing" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
-            Plans & billing
-          </Link>
+          <p className="dashboard-banner__hint">Use Billing to unlock more photo capacity and featured credits.</p>
         </div>
       )}
 
@@ -64,33 +73,25 @@ export default function DashboardPage() {
           <p className="stat-card__label">Contact clicks</p>
           <p className="stat-card__value">{stats?.totalContactClicks ?? '—'}</p>
         </div>
+        <div className="stat-card">
+          <p className="stat-card__label">Services listed</p>
+          <p className="stat-card__value">{listings.filter((l) => (l.type || 'product') === 'service').length}</p>
+        </div>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-          marginBottom: '1rem',
-        }}
-      >
-        <h2 className="section-title">Your products</h2>
-        <Link to="/sell" className="btn btn-primary" style={{ textDecoration: 'none' }}>
-          Add product
-        </Link>
+      <div className="dashboard-list__head">
+        <h2 className="section-title">Your listings</h2>
       </div>
 
       {isLoading ? (
         <p className="text-muted">Loading…</p>
-      ) : !mine?.listings?.length ? (
+      ) : !listings.length ? (
         <p className="text-muted">
-          You have no listings yet. <Link to="/sell">Create your first product</Link>
+          You have no listings yet. <Link to="/sell">Create your first listing</Link>
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {mine.listings.map((l) => (
+        <div className="dashboard-list">
+          {listings.map((l) => (
             <div key={l.id} className="card listing-row">
               <div className="listing-row__main">
                 {l.images[0] ? (
@@ -102,6 +103,11 @@ export default function DashboardPage() {
                   <Link to={`/listings/${l.id}`} className="listing-row__title">
                     {l.title}
                   </Link>
+                  <p className="listing-row__meta">
+                    <span className={`pill ${(l.type || 'product') === 'service' ? 'pill--service' : 'pill--product'}`}>
+                      {(l.type || 'product') === 'service' ? 'Service' : 'Product'}
+                    </span>
+                  </p>
                   <p className="listing-row__price">{formatPrice(l.price, l.currency || 'USD')}</p>
                   <p className="listing-row__meta">
                     {l.views} views · {l.contactClicks} contacts

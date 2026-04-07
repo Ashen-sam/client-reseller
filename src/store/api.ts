@@ -216,6 +216,7 @@ export const api = createApi({
     getListings: builder.query<ListingsResponse, ListingsQueryArgs | void>({
       query: (args) => {
         const p = new URLSearchParams();
+        if (args?.type) p.set("type", args.type);
         if (args?.category) p.set("category", args.category);
         if (args?.minPrice) p.set("minPrice", args.minPrice);
         if (args?.maxPrice) p.set("maxPrice", args.maxPrice);
@@ -231,6 +232,7 @@ export const api = createApi({
           ...l,
           id: String(l.id),
           currency: l.currency || "USD",
+          type: l.type || "product",
           featured: Boolean(l.featured),
           images: (l.images || []).map(listingImageSrc),
         })),
@@ -254,6 +256,7 @@ export const api = createApi({
           ...res.listing,
           id: String(res.listing.id),
           currency: res.listing.currency || "USD",
+          type: res.listing.type || "product",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },
@@ -268,6 +271,7 @@ export const api = createApi({
           ...l,
           id: String(l.id),
           currency: l.currency || "USD",
+          type: l.type || "product",
           featured: Boolean(l.featured),
           images: (l.images || []).map(listingImageSrc),
         })),
@@ -319,6 +323,7 @@ export const api = createApi({
           ...res.listing,
           id: String(res.listing.id),
           currency: res.listing.currency || "USD",
+          type: res.listing.type || "product",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },
@@ -340,6 +345,7 @@ export const api = createApi({
                   description: "",
                   price: 0,
                   currency: "USD",
+                  type: "product",
                   category: "other",
                   featured: false,
                   images: [],
@@ -364,6 +370,7 @@ export const api = createApi({
                 description: "",
                 price: 0,
                 currency: "USD",
+                type: "product",
                 category: "other",
                 featured: false,
                 images: [],
@@ -416,6 +423,7 @@ export const api = createApi({
           ...res.listing,
           id: String(res.listing.id),
           currency: res.listing.currency || "USD",
+          type: res.listing.type || "product",
           featured: Boolean(res.listing.featured),
           images: (res.listing.images || []).map(listingImageSrc),
         },

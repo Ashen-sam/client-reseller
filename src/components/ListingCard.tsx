@@ -11,6 +11,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const navigate = useNavigate();
   const isPending = listing.id.startsWith('optimistic-');
   const imgs = listing.images?.length ? listing.images : [];
+  const listingType = listing.type || 'product';
 
   function open() {
     if (!isPending) navigate(`/listings/${listing.id}`);
@@ -34,6 +35,9 @@ export default function ListingCard({ listing }: { listing: Listing }) {
       <div className="product-card__media">
         <ProductCardCarousel images={imgs} interactive={!isPending} />
         <div className="product-card__badges">
+          <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'} pill--on-media`}>
+            {listingType === 'service' ? 'Service' : 'Product'}
+          </span>
           <span className="pill pill--on-media">{categoryLabel(listing.category)}</span>
           {listing.featured && (
             <span className="pill pill--featured pill--on-media" style={{ marginLeft: 'auto' }}>

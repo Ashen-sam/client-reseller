@@ -42,6 +42,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [listingType, setListingType] = useState<'product' | 'service'>('product');
   const [currency, setCurrency] = useState('USD');
   const [category, setCategory] = useState('other');
   const [phone, setPhone] = useState('');
@@ -64,6 +65,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
     setTitle(listing.title);
     setDescription(listing.description);
     setPrice(String(listing.price));
+    setListingType((listing.type as 'product' | 'service') || 'product');
     setCurrency(listing.currency || 'USD');
     setCategory(listing.category);
     setPhone(listing.contact.phone);
@@ -113,6 +115,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
     fd.append('title', title.trim());
     fd.append('description', description.trim());
     fd.append('price', price);
+    fd.append('type', listingType);
     fd.append('currency', currency);
     fd.append('category', category);
     fd.append('phone', phone.trim());
@@ -181,7 +184,9 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
         <Avatar name={me?.user?.name ?? 'Seller'} seed={me?.user?.id} size="lg" />
         <div className="page-surface__grow">
           <p className="page-header-eyebrow">{mode === 'create' ? 'New listing' : 'Update listing'}</p>
-          <h1 className="page-header-title">{mode === 'create' ? 'Add a product' : 'Edit listing'}</h1>
+          <h1 className="page-header-title">
+            {mode === 'create' ? `Add a ${listingType === 'service' ? 'service' : 'product'}` : 'Edit listing'}
+          </h1>
           <p className="page-header-subtitle">
             <Link to={mode === 'edit' && id ? `/listings/${id}` : '/dashboard'}>← Back</Link>
             {' · '}
@@ -223,7 +228,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
             }}
           >
             <p className="product-dropzone__title">
-              {mode === 'create' ? 'Product photos' : 'Add more photos'}
+              {mode === 'create' ? `${listingType === 'service' ? 'Service' : 'Product'} photos` : 'Add more photos'}
             </p>
             <p className="product-dropzone__hint">
               Drag and drop images here, or choose files. JPEG, PNG, GIF, WebP — up to 5MB each. You can add{' '}
@@ -309,6 +314,18 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
             <input id="title" required value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} />
           </div>
 
+          <div className="field">
+            <label htmlFor="type">Type</label>
+            <select
+              id="type"
+              value={listingType}
+              onChange={(e) => setListingType(e.target.value as 'product' | 'service')}
+            >
+              <option value="product">Product</option>
+              <option value="service">Service</option>
+            </select>
+          </div>
+
           <div className="product-form__row-2">
             <div className="field">
               <label htmlFor="price">Price</label>
@@ -371,7 +388,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
           </div>
 
           <button type="submit" className="btn btn-primary btn-block" disabled={busy} style={{ marginTop: '0.25rem' }}>
-            {busy ? 'Saving…' : mode === 'create' ? 'Publish product' : 'Save changes'}
+            {busy ? 'Saving…' : mode === 'create' ? `Publish ${listingType}` : 'Save changes'}
           </button>
         </div>
       </form>

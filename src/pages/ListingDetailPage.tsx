@@ -88,6 +88,7 @@ export default function ListingDetailPage() {
   const sellerName = listing.seller?.name ?? 'Seller';
   const sellerId = listing.seller?.id ?? sellerName;
   const sellerPhone = contact.phone?.trim() || '';
+  const listingType = listing.type || 'product';
 
   return (
     <div className="container">
@@ -146,6 +147,9 @@ export default function ListingDetailPage() {
         <aside className="pdp__aside">
           <div className="pdp__buy-card">
             <div className="pdp__pill-row">
+              <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'}`}>
+                {listingType === 'service' ? 'Service' : 'Product'}
+              </span>
               <span className="pill">{categoryLabel(listing.category)}</span>
               {listing.featured && <span className="pill pill--featured">Featured</span>}
             </div>

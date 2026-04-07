@@ -43,6 +43,7 @@ export interface Listing {
   description: string;
   price: number;
   currency: string;
+  type?: 'product' | 'service';
   category: string;
   featured?: boolean;
   images: string[];
@@ -66,6 +67,7 @@ export interface ListingsResponse {
 }
 
 export interface ListingsQueryArgs {
+  type?: 'product' | 'service';
   category?: string;
   minPrice?: string;
   maxPrice?: string;
