@@ -56,6 +56,7 @@
   --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-card-hover: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
   --container: 1280px;
+  --content-max: 1120px;
   --header-h: 56px;
 
   /* Legacy aliases (pages still using var(--accent) etc.) */
@@ -125,20 +126,20 @@ img {
 
 /* —— Layout —— */
 .container {
-  width: min(var(--container), 100% - 2rem);
+  width: min(var(--content-max), 100% - 2rem);
   margin-inline: auto;
 }
 
 .container--wide {
-  width: min(1120px, 100% - 2rem);
+  width: min(var(--content-max), 100% - 2rem);
 }
 
 @media (min-width: 768px) {
   .container {
-    width: min(var(--container), 100% - 3rem);
+    width: min(var(--content-max), 100% - 3rem);
   }
   .container--wide {
-    width: min(1120px, 100% - 3rem);
+    width: min(var(--content-max), 100% - 3rem);
   }
 }
 
@@ -154,9 +155,8 @@ img {
 
 .site-header__inner {
   height: 100%;
-  max-width: var(--container);
+  width: min(var(--content-max), 100% - 2rem);
   margin: 0 auto;
-  padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -165,7 +165,7 @@ img {
 
 @media (min-width: 768px) {
   .site-header__inner {
-    padding: 0 1.5rem;
+    width: min(var(--content-max), 100% - 3rem);
   }
 }
 
@@ -321,8 +321,8 @@ img {
 
 .site-nav {
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.25rem 1rem;
+  flex-wrap: nowrap;
+  gap: 0.6rem;
 }
 
 /* Desktop: show bar nav, align links to the right. */
@@ -342,6 +342,7 @@ img {
   padding: 0.35rem 0;
   border-radius: var(--radius-sm);
   transition: color 0.12s ease;
+  white-space: nowrap;
 }
 
 .site-nav__link:hover {
@@ -363,6 +364,14 @@ img {
   white-space: nowrap;
 }
 
+.site-nav__account {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-left: 0.25rem;
+  min-width: 0;
+}
+
 .site-main {
   flex: 1;
   padding: 1.5rem 0 3rem;
@@ -377,11 +386,22 @@ img {
 .site-footer {
   border-top: 1px solid var(--color-border);
   background: var(--color-bg-subtle);
-  padding: 1.25rem 1rem;
+  padding: 1.25rem 0;
   text-align: center;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   line-height: var(--leading-tight);
+}
+
+.site-footer__inner {
+  width: min(var(--content-max), 100% - 2rem);
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .site-footer__inner {
+    width: min(var(--content-max), 100% - 3rem);
+  }
 }
 
 /* —— Page chrome —— */
@@ -1504,9 +1524,7 @@ img {
 
 /* —— Auth —— */
 .auth-page {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0 0.5rem;
+  width: 100%;
 }
 
 .auth-page__title {

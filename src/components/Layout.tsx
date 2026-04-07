@@ -117,7 +117,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </>
             )}
             {user ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: '0.25rem' }}>
+              <span className="site-nav__account">
                 <span className="site-nav__user" title={user.name}>
                   {user.name}
                 </span>
@@ -213,7 +213,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <main className="site-main">{children}</main>
       <footer className="site-footer">
-        List products, connect with buyers directly. No in-app checkout — you arrange payment with the seller.
+        <div className="site-footer__inner">
+          List products, connect with buyers directly. No in-app checkout — you arrange payment with the seller.
+        </div>
       </footer>
     </div>
   );

@@ -19,7 +19,7 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 640 }}>
+    <div className="container">
       <header className="page-surface page-surface--page-header">
         <div className="page-surface__inner">
           <p className="page-header-eyebrow">Billing</p>
