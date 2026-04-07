@@ -159,21 +159,23 @@ export const api = createApi({
     }),
 
     getMe: builder.query<MeResponse | null, void>({
-      query: () => ({
-        url: "api/auth/me",
-        validateStatus: (response) => response.status === 200 || response.status === 401,
-      }),
-      transformResponse: (response: unknown, meta: { response?: Response } | undefined) => {
-        const status = meta?.response?.status;
-        if (status === 401) {
-          clearAuthToken();
-          return null;
+      queryFn: async (_arg, _api, extraOptions, baseQuery) => {
+        const t = await getClerkToken();
+        if (!t) return { data: null };
+        void extraOptions;
+        const res = await baseQuery({
+          url: "api/auth/me",
+          headers: { Authorization: `Bearer ${t}` },
+          validateStatus: (response) => response.status === 200 || response.status === 401,
+        });
+        if (res.error) {
+          if (res.error.status === 401) {
+            clearAuthToken();
+            return { data: null };
+          }
+          return { error: res.error };
         }
-        const body = response as { user?: unknown } | null;
-        if (body && typeof body === "object" && body.user) {
-          return response as MeResponse;
-        }
-        return null;
+        return { data: res.data as MeResponse | null };
       },
       providesTags: (result) => (result?.user ? ["Auth"] : []),
     }),
