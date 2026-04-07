@@ -592,12 +592,12 @@ img {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: var(--tracking-tight);
-  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #d6d9dc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   user-select: none;
 }
 
@@ -620,7 +620,9 @@ img {
 }
 
 .avatar--muted {
-  background: linear-gradient(135deg, #6d7175 0%, #4a4d50 100%) !important;
+  background: #f1f1ef !important;
+  color: #37352f !important;
+  border-color: #d9d9d6;
 }
 
 .person-card {

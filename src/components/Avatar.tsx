@@ -11,10 +11,12 @@ export function initialsFromName(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function gradientForSeed(seed: string): string {
-  const h = hashSeed(seed) % 320;
-  const h2 = (h + 48) % 360;
-  return `linear-gradient(135deg, hsl(${h} 52% 40%) 0%, hsl(${h2} 48% 32%) 100%)`;
+function notionPaletteForSeed(seed: string): { bg: string; fg: string } {
+  const h = hashSeed(seed) % 360;
+  // Soft neutral-ish tinted backgrounds, similar to Notion's subtle avatar chips.
+  const bg = `hsl(${h} 22% 92%)`;
+  const fg = `hsl(${h} 18% 22%)`;
+  return { bg, fg };
 }
 
 type Size = 'sm' | 'md' | 'lg';
@@ -33,7 +35,8 @@ export default function Avatar({ name, seed, size = 'md', muted, className = '' 
   const text = initialsFromName(name || '?');
   const s = seed ?? name ?? '?';
   const sizeClass = size === 'sm' ? 'avatar--sm' : size === 'lg' ? 'avatar--lg' : 'avatar--md';
-  const style = muted ? undefined : { background: gradientForSeed(s) };
+  const palette = notionPaletteForSeed(s);
+  const style = muted ? undefined : { background: palette.bg, color: palette.fg };
 
   return (
     <span
