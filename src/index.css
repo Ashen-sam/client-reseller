@@ -1938,6 +1938,12 @@ a.btn:hover {
   gap: 0.5rem;
 }
 
+.ui-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 /* —— Dashboard listing rows —— */
 .dashboard-banner {
   display: flex;

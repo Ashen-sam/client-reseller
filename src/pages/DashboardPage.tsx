@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { BarChart3, CreditCard, Eye, MousePointerClick, PenSquare, PlusCircle, Trash2, Wrench } from 'lucide-react';
 import {
   useGetMineQuery,
   useGetDashboardStatsQuery,
@@ -31,10 +32,10 @@ export default function DashboardPage() {
         </div>
         <div className="dashboard-shell__actions">
           <Link to="/billing" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
-            Billing
+            <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
           </Link>
           <Link to="/sell" className="btn btn-primary" style={{ textDecoration: 'none' }}>
-            New listing
+            <span className="ui-icon-label"><PlusCircle size={16} />New listing</span>
           </Link>
         </div>
       </header>
@@ -63,19 +64,21 @@ export default function DashboardPage() {
       <div className="stat-grid">
         <div className="stat-card">
           <p className="stat-card__label">Listings</p>
-          <p className="stat-card__value">{stats?.listingCount ?? '—'}</p>
+          <p className="stat-card__value"><span className="ui-icon-label"><BarChart3 size={18} />{stats?.listingCount ?? '—'}</span></p>
         </div>
         <div className="stat-card">
           <p className="stat-card__label">Total views</p>
-          <p className="stat-card__value">{stats?.totalViews ?? '—'}</p>
+          <p className="stat-card__value"><span className="ui-icon-label"><Eye size={18} />{stats?.totalViews ?? '—'}</span></p>
         </div>
         <div className="stat-card">
           <p className="stat-card__label">Contact clicks</p>
-          <p className="stat-card__value">{stats?.totalContactClicks ?? '—'}</p>
+          <p className="stat-card__value"><span className="ui-icon-label"><MousePointerClick size={18} />{stats?.totalContactClicks ?? '—'}</span></p>
         </div>
         <div className="stat-card">
           <p className="stat-card__label">Services listed</p>
-          <p className="stat-card__value">{listings.filter((l) => (l.type || 'product') === 'service').length}</p>
+          <p className="stat-card__value">
+            <span className="ui-icon-label"><Wrench size={18} />{listings.filter((l) => (l.type || 'product') === 'service').length}</span>
+          </p>
         </div>
       </div>
 
@@ -116,7 +119,7 @@ export default function DashboardPage() {
               </div>
               <div className="listing-row__actions">
                 <Link to={`/listings/${l.id}/edit`} className="btn btn-ghost" style={{ textDecoration: 'none' }}>
-                  Edit
+                  <span className="ui-icon-label"><PenSquare size={16} />Edit</span>
                 </Link>
                 <button
                   type="button"
@@ -126,7 +129,7 @@ export default function DashboardPage() {
                     if (window.confirm('Delete this listing?')) void deleteListing(l.id);
                   }}
                 >
-                  Delete
+                  <span className="ui-icon-label"><Trash2 size={16} />Delete</span>
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Eye, ShieldAlert, Trash2 } from 'lucide-react';
 import { useGetListingsQuery, useDeleteListingMutation } from '../store/api';
 import ListingCard from '../components/ListingCard';
 
@@ -38,18 +39,18 @@ export default function AdminPage() {
                     if (window.confirm(`Remove “${l.title}”?`)) void deleteListing(l.id);
                   }}
                 >
-                  Remove listing
+                  <span className="ui-icon-label"><Trash2 size={16} />Remove listing</span>
                 </button>
                 <Link
                   to={`/listings/${l.id}`}
                   style={{ fontSize: 'var(--text-sm)', textAlign: 'center' }}
                 >
-                  View product
+                  <span className="ui-icon-label"><Eye size={15} />View product</span>
                 </Link>
               </div>
             ))}
           </div>
-          {!data?.listings?.length && <p className="text-muted">No listings yet.</p>}
+          {!data?.listings?.length && <p className="text-muted"><span className="ui-icon-label"><ShieldAlert size={16} />No listings yet.</span></p>}
         </>
       )}
     </div>

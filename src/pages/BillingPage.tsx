@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { BadgeCheck, CreditCard, ShoppingCart } from 'lucide-react';
 import { useGetMeQuery, usePurchaseProductMutation } from '../store/api';
 
 export default function BillingPage() {
@@ -30,7 +31,7 @@ export default function BillingPage() {
         </div>
       </header>
       <p className="breadcrumb" style={{ marginBottom: '1.5rem' }}>
-        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/dashboard"><span className="ui-icon-label"><CreditCard size={14} />Dashboard</span></Link>
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -54,7 +55,10 @@ export default function BillingPage() {
                 disabled={isLoading || Boolean(imagePackOwned)}
                 onClick={() => void buy(p.id)}
               >
-                {imagePackOwned ? 'Already unlocked' : isLoading ? 'Processing…' : 'Pay (demo)'}
+                <span className="ui-icon-label">
+                  {imagePackOwned ? <BadgeCheck size={16} /> : <ShoppingCart size={16} />}
+                  {imagePackOwned ? 'Already unlocked' : isLoading ? 'Processing…' : 'Pay (demo)'}
+                </span>
               </button>
             </div>
           );

@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { CreditCard, LayoutDashboard, LogIn, LogOut, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { api, useLogoutMutation, useGetMeQuery } from '../store/api';
 import { clearAuth } from '../store/authSlice';
@@ -67,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
               }
             >
-              Marketplace
+              <span className="ui-icon-label"><Store size={16} />Marketplace</span>
             </NavLink>
             {user && (
               <>
@@ -77,7 +78,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
                   }
                 >
-                  Sell
+                  <span className="ui-icon-label"><ShoppingBag size={16} />Sell</span>
                 </NavLink>
                 <NavLink
                   to="/dashboard"
@@ -85,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
                   }
                 >
-                  Dashboard
+                  <span className="ui-icon-label"><LayoutDashboard size={16} />Dashboard</span>
                 </NavLink>
                 <NavLink
                   to="/billing"
@@ -93,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
                   }
                 >
-                  Billing
+                  <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
                 </NavLink>
                 {user.role === 'admin' && (
                   <NavLink
@@ -102,7 +103,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
                     }
                   >
-                    Admin
+                    <span className="ui-icon-label"><Shield size={16} />Admin</span>
                   </NavLink>
                 )}
               </>
@@ -118,7 +119,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   disabled={loggingOut}
                   onClick={() => void handleLogout()}
                 >
-                  Log out
+                  <span className="ui-icon-label"><LogOut size={16} />Log out</span>
                 </button>
               </span>
             ) : (
@@ -129,10 +130,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
                   }
                 >
-                  Log in
+                  <span className="ui-icon-label"><LogIn size={16} />Log in</span>
                 </NavLink>
                 <Link to="/register" className="btn btn-primary" style={{ textDecoration: 'none' }}>
-                  Sign up
+                  <span className="ui-icon-label"><UserPlus size={16} />Sign up</span>
                 </Link>
               </>
             )}
@@ -154,24 +155,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
         <div className="site-nav-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
           <NavLink to="/" end className={linkClass} onClick={() => setMenuOpen(false)}>
-            Marketplace
+            <span className="ui-icon-label"><Store size={16} />Marketplace</span>
           </NavLink>
           {user ? (
             <>
               <div className="site-nav-drawer__user">{user.name}</div>
               <div className="site-nav-drawer__divider" />
               <NavLink to="/sell" className={linkClass} onClick={() => setMenuOpen(false)}>
-                Sell
+                <span className="ui-icon-label"><ShoppingBag size={16} />Sell</span>
               </NavLink>
               <NavLink to="/dashboard" className={linkClass} onClick={() => setMenuOpen(false)}>
-                Dashboard
+                <span className="ui-icon-label"><LayoutDashboard size={16} />Dashboard</span>
               </NavLink>
               <NavLink to="/billing" className={linkClass} onClick={() => setMenuOpen(false)}>
-                Billing
+                <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
               </NavLink>
               {user.role === 'admin' && (
                 <NavLink to="/admin" className={linkClass} onClick={() => setMenuOpen(false)}>
-                  Admin
+                  <span className="ui-icon-label"><Shield size={16} />Admin</span>
                 </NavLink>
               )}
               <div className="site-nav-drawer__divider" />
@@ -182,17 +183,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 disabled={loggingOut}
                 onClick={() => void handleLogout()}
               >
-                Log out
+                <span className="ui-icon-label"><LogOut size={16} />Log out</span>
               </button>
             </>
           ) : (
             <>
               <div className="site-nav-drawer__divider" />
               <NavLink to="/login" className={linkClass} onClick={() => setMenuOpen(false)}>
-                Log in
+                <span className="ui-icon-label"><LogIn size={16} />Log in</span>
               </NavLink>
               <NavLink to="/register" className={linkClass} onClick={() => setMenuOpen(false)}>
-                Sign up
+                <span className="ui-icon-label"><UserPlus size={16} />Sign up</span>
               </NavLink>
             </>
           )}

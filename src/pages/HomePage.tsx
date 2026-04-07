@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
 import { useGetCategoriesQuery, useGetListingsQuery, useGetMeQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
@@ -78,10 +79,10 @@ export default function HomePage() {
           </div>
           <div className="marketplace-hero__actions">
             <a href="#marketplace-browse" className="btn btn-primary">
-              Browse products
+              <span className="ui-icon-label"><Sparkles size={16} />Browse products</span>
             </a>
             <Link to="/sell" className="btn btn-ghost">
-              List an item
+              <span className="ui-icon-label"><ArrowRight size={16} />List an item</span>
             </Link>
           </div>
         </div>
@@ -89,7 +90,9 @@ export default function HomePage() {
 
       <div className="filters-panel" id="marketplace-browse">
         <div className="filters-panel__head">
-          <h2 className="filters-panel__head-title">Find what you need</h2>
+          <h2 className="filters-panel__head-title">
+            <span className="ui-icon-label"><Filter size={18} />Find what you need</span>
+          </h2>
           <p className="filters-panel__head-sub">Filter by category, price range, and sort order.</p>
         </div>
         <div className="field">
@@ -215,7 +218,7 @@ export default function HomePage() {
                 disabled={page <= 1 || isFetching}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                Previous
+                <span className="ui-icon-label"><ArrowLeft size={15} />Previous</span>
               </button>
               <span className="pagination__status">
                 Page {data.page} of {data.pages}
@@ -226,7 +229,7 @@ export default function HomePage() {
                 disabled={page >= data.pages || isFetching}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                <span className="ui-icon-label">Next<ArrowRight size={15} /></span>
               </button>
             </div>
           )}

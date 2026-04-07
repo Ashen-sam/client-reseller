@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Camera, Eye, MousePointerClick, Star } from 'lucide-react';
 import type { Listing } from '../types';
 import { formatPrice } from '../lib/formatPrice';
 import ProductCardCarousel from './ProductCardCarousel';
@@ -41,7 +42,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="pill pill--on-media">{categoryLabel(listing.category)}</span>
           {listing.featured && (
             <span className="pill pill--featured pill--on-media" style={{ marginLeft: 'auto' }}>
-              Featured
+              <span className="ui-icon-label"><Star size={12} />Featured</span>
             </span>
           )}
         </div>
@@ -50,9 +51,14 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <h2 className="product-card__title">{listing.title}</h2>
         <p className="product-card__price">{formatPrice(listing.price, listing.currency || 'USD')}</p>
         <p className="product-card__meta">
-          {listing.views} views · {listing.contactClicks} contacts
+          <span className="ui-icon-label"><Eye size={13} />{listing.views} views</span>
+          {' · '}
+          <span className="ui-icon-label"><MousePointerClick size={13} />{listing.contactClicks} contacts</span>
           {imgs.length > 1 && !isPending && (
-            <span className="product-card__photos-hint"> · {imgs.length} photos</span>
+            <span className="product-card__photos-hint">
+              {' · '}
+              <span className="ui-icon-label"><Camera size={13} />{imgs.length} photos</span>
+            </span>
           )}
         </p>
       </div>
