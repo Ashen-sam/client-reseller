@@ -83,12 +83,11 @@ export default function ListingDetailPage() {
   }
 
   const { contact } = listing;
-  const wa = contact.whatsapp.replace(/\D/g, '');
-  const waLink = wa ? `https://wa.me/${wa}` : '';
   const images = listing.images ?? [];
   const mainSrc = images[imgIdx] ?? images[0];
   const sellerName = listing.seller?.name ?? 'Seller';
   const sellerId = listing.seller?.id ?? sellerName;
+  const sellerPhone = contact.phone?.trim() || '';
 
   return (
     <div className="container">
@@ -141,17 +140,7 @@ export default function ListingDetailPage() {
           )}
 
           <h2 className="pdp__section-title">Description</h2>
-          <p
-            style={{
-              margin: 0,
-              whiteSpace: 'pre-wrap',
-              color: 'var(--color-text-secondary)',
-              fontSize: 'var(--text-sm)',
-              lineHeight: 1.65,
-            }}
-          >
-            {listing.description}
-          </p>
+          <p className="pdp__description">{listing.description}</p>
         </div>
 
         <aside className="pdp__aside">
@@ -175,8 +164,8 @@ export default function ListingDetailPage() {
               <div className="person-card__body">
                 <p className="person-card__label">Listed by</p>
                 <p className="person-card__name">{sellerName}</p>
-                {listing.seller?.email && (
-                  <p className="person-card__meta">{listing.seller.email}</p>
+                {sellerPhone && (
+                  <p className="person-card__meta">{sellerPhone}</p>
                 )}
               </div>
             </div>
@@ -217,37 +206,9 @@ export default function ListingDetailPage() {
                   Call
                 </a>
               )}
-              {waLink && (
-                <a
-                  href={waLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-ghost btn-block"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    void trackContact(() => window.open(waLink, '_blank'));
-                  }}
-                >
-                  WhatsApp
-                </a>
-              )}
-              {contact.email && (
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="btn btn-ghost btn-block"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    void trackContact(() => {
-                      window.location.href = `mailto:${contact.email}`;
-                    });
-                  }}
-                >
-                  Email
-                </a>
-              )}
-              {!contact.phone && !waLink && !contact.email && (
+              {!contact.phone && (
                 <p className="text-muted" style={{ fontSize: 'var(--text-sm)', margin: 0 }}>
-                  No contact info provided.
+                  Seller has not provided a phone number.
                 </p>
               )}
             </div>

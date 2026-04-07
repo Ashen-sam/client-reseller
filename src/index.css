@@ -1427,6 +1427,16 @@ img {
   margin-top: 0;
 }
 
+.pdp__description {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .pdp__aside {
   border-left: 1px solid var(--color-border);
   padding-left: 1.5rem;
