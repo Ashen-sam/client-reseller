@@ -1,14 +1,10 @@
-import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useRegisterMutation, useGetMeQuery } from '../store/api';
+import { Navigate } from 'react-router-dom';
+import { SignUp, useAuth } from '@clerk/clerk-react';
+import { useGetMeQuery } from '../store/api';
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
+  const { isSignedIn } = useAuth();
   const { data: me, isLoading, isFetching } = useGetMeQuery();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [register, { isLoading: submitting, error }] = useRegisterMutation();
 
   if (isLoading || isFetching) {
     return (
@@ -18,24 +14,9 @@ export default function RegisterPage() {
     );
   }
 
-  if (me?.user) {
+  if (isSignedIn && me?.user) {
     return <Navigate to="/" replace />;
   }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      await register({ email, password, name }).unwrap();
-      navigate('/login', { replace: true, state: { registered: true } });
-    } catch {
-      /* handled */
-    }
-  }
-
-  const msg =
-    error && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
-      ? String((error.data as { message: string }).message)
-      : 'Could not register';
 
   return (
     <div className="container auth-page">
@@ -51,47 +32,16 @@ export default function RegisterPage() {
         </div>
       </header>
       <p className="text-muted" style={{ marginTop: 0, marginBottom: '1.25rem', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Log in</Link>
+        Create your account with email/password or Google via Clerk.
       </p>
-      <form className="auth-card" onSubmit={onSubmit} style={{ display: 'grid', gap: '1rem' }}>
-        {error && <div className="error-banner">{msg}</div>}
-        <div className="field">
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoComplete="name"
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-          {submitting ? 'Creating account…' : 'Create account'}
-        </button>
-      </form>
+      <div className="auth-card">
+        <SignUp
+          path="/register"
+          routing="path"
+          signInUrl="/login"
+          forceRedirectUrl="/"
+        />
+      </div>
     </div>
   );
 }

@@ -1,21 +1,10 @@
-import { useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useLoginMutation, useGetMeQuery } from '../store/api';
-import { useAppDispatch } from '../store/hooks';
-import { setSession } from '../store/authSlice';
-import { setAuthToken } from '../lib/authToken';
+import { Navigate } from 'react-router-dom';
+import { SignIn, useAuth } from '@clerk/clerk-react';
+import { useGetMeQuery } from '../store/api';
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as { from?: string; registered?: boolean } | null)?.from ?? '/';
+  const { isSignedIn } = useAuth();
   const { data: me, isLoading } = useGetMeQuery();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [login, { isLoading: submitting, error }] = useLoginMutation();
-
-  /* Only block on first load — not on getMe refetch after login (isFetching), or we trap the UI and skip redirect. */
   if (isLoading) {
     return (
       <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
@@ -24,26 +13,7 @@ export default function LoginPage() {
     );
   }
 
-  if (me?.user) {
-    return <Navigate to={from} replace />;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      const res = await login({ email, password }).unwrap();
-      if (res.token) setAuthToken(res.token);
-      dispatch(setSession({ user: res.user, limits: res.limits }));
-      navigate(from, { replace: true });
-    } catch {
-      /* handled below */
-    }
-  }
-
-  const msg =
-    error && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
-      ? String((error.data as { message: string }).message)
-      : 'Login failed';
+  if (isSignedIn && me?.user) return <Navigate to="/" replace />;
 
   return (
     <div className="container auth-page">
@@ -59,41 +29,16 @@ export default function LoginPage() {
         </div>
       </header>
       <p className="text-muted" style={{ marginTop: 0, marginBottom: '1.25rem', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
-        New here? <Link to="/register">Create an account</Link>
+        Secure sign in powered by Clerk.
       </p>
-      <form className="auth-card" onSubmit={onSubmit} style={{ display: 'grid', gap: '1rem' }}>
-        {(location.state as { registered?: boolean } | null)?.registered && (
-          <div className="success-banner" role="status">
-            Account created. Sign in with your email and password.
-          </div>
-        )}
-        {error && <div className="error-banner">{msg}</div>}
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </button>
-      </form>
+      <div className="auth-card">
+        <SignIn
+          path="/login"
+          routing="path"
+          signUpUrl="/register"
+          forceRedirectUrl="/"
+        />
+      </div>
     </div>
   );
 }
