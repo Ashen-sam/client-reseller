@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
 import { useGetMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
-import { api } from './store/api';
+import { clearAuthToken } from './lib/authToken';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ListingDetailPage from './pages/ListingDetailPage';
@@ -18,9 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { isSignedIn, isLoaded } = useAuth();
   const { data, error, isSuccess } = useGetMeQuery(undefined, {
-    skip: !isLoaded || !isSignedIn,
     refetchOnMountOrArgChange: true,
   });
 
@@ -32,17 +29,10 @@ export default function App() {
 
   useEffect(() => {
     if (error && 'status' in error && error.status === 401) {
+      clearAuthToken();
       dispatch(clearAuth());
     }
   }, [dispatch, error]);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn) {
-      dispatch(api.util.resetApiState());
-      dispatch(clearAuth());
-    }
-  }, [dispatch, isLoaded, isSignedIn]);
 
   return (
     <Layout>
@@ -51,7 +41,6 @@ export default function App() {
         <Route path="/listings/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/sso-callback" element={<LoginPage />} />
         <Route
           path="/dashboard"
           element={

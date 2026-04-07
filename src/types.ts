@@ -20,8 +20,6 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
-  emailVerified?: boolean;
-  authProvider?: 'local' | 'google';
   listingImagePackPurchased: boolean;
   featuredTokens: number;
 }
@@ -31,12 +29,6 @@ export interface MeResponse {
   limits: AccountLimits;
   /** Present on login/register — used when API is on another origin than the SPA. */
   token?: string;
-}
-
-export interface RegisterResponse {
-  ok: boolean;
-  message: string;
-  verificationToken?: string;
 }
 
 export interface SellerRef {

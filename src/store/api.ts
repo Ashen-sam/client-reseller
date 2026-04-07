@@ -7,8 +7,7 @@ import type {
   MeResponse,
   User,
 } from "../types";
-import { clearAuthToken } from "../lib/authToken";
-import { getClerkToken } from "../lib/clerkToken";
+import { clearAuthToken, getAuthToken, setAuthToken } from "../lib/authToken";
 
 /**
  * Dev: `/` + Vite proxy → local API.
@@ -28,6 +27,11 @@ function getApiBaseUrl(): string {
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: getApiBaseUrl(),
   credentials: "include",
+  prepareHeaders: (headers) => {
+    const t = getAuthToken();
+    if (t) headers.set("Authorization", `Bearer ${t}`);
+    return headers;
+  },
 });
 
 function requestUrl(args: string | FetchArgs): string {
@@ -39,38 +43,12 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
   api,
   extraOptions,
 ) => {
-  const originalUrl = requestUrl(args);
-  const clerkToken = await getClerkToken();
-  const authToken = clerkToken;
-  const withAuth: string | FetchArgs =
-    typeof args === "string"
-      ? { url: args, headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined }
-      : {
-          ...args,
-          headers: authToken
-            ? { ...(args.headers as Record<string, string> | undefined), Authorization: `Bearer ${authToken}` }
-            : args.headers,
-        };
-  let result = await rawBaseQuery(withAuth, api, extraOptions);
-  if (result.error?.status === 401 && originalUrl.includes("auth/me")) {
-    const refreshed = await getClerkToken(true);
-    if (refreshed && refreshed !== authToken) {
-      const retryArgs: string | FetchArgs =
-        typeof args === "string"
-          ? { url: args, headers: { Authorization: `Bearer ${refreshed}` } }
-          : {
-              ...args,
-              headers: {
-                ...(args.headers as Record<string, string> | undefined),
-                Authorization: `Bearer ${refreshed}`,
-              },
-            };
-      result = await rawBaseQuery(retryArgs, api, extraOptions);
-    }
-  }
+  const result = await rawBaseQuery(args, api, extraOptions);
   if (result.error?.status === 401) {
     const u = requestUrl(args);
     if (
+      !u.includes("auth/login") &&
+      !u.includes("auth/register") &&
       !u.includes("auth/me")
     ) {
       clearAuthToken();
@@ -159,25 +137,54 @@ export const api = createApi({
     }),
 
     getMe: builder.query<MeResponse | null, void>({
-      queryFn: async (_arg, _api, extraOptions, baseQuery) => {
-        const t = await getClerkToken();
-        if (!t) return { data: null };
-        void extraOptions;
-        const res = await baseQuery({
-          url: "api/auth/me",
-          headers: { Authorization: `Bearer ${t}` },
-          validateStatus: (response) => response.status === 200 || response.status === 401,
-        });
-        if (res.error) {
-          if (res.error.status === 401) {
-            clearAuthToken();
-            return { data: null };
-          }
-          return { error: res.error };
+      query: () => ({
+        url: "api/auth/me",
+        validateStatus: (response) => response.status === 200 || response.status === 401,
+      }),
+      transformResponse: (response: unknown, meta: { response?: Response } | undefined) => {
+        const status = meta?.response?.status;
+        if (status === 401) {
+          clearAuthToken();
+          return null;
         }
-        return { data: res.data as MeResponse | null };
+        const body = response as { user?: unknown } | null;
+        if (body && typeof body === "object" && body.user) {
+          return response as MeResponse;
+        }
+        return null;
       },
       providesTags: (result) => (result?.user ? ["Auth"] : []),
+    }),
+
+    login: builder.mutation<MeResponse, { email: string; password: string }>({
+      query: (body) => ({
+        url: "api/auth/login",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+      async onQueryStarted(_arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.token) setAuthToken(data.token);
+        } catch {
+          /* invalid login */
+        }
+      },
+      invalidatesTags: ["Auth", "Mine", "Stats"],
+    }),
+
+    register: builder.mutation<
+      MeResponse,
+      { email: string; password: string; name: string }
+    >({
+      query: (body) => ({
+        url: "api/auth/register",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+      invalidatesTags: ["Auth", "Mine", "Stats"],
     }),
 
     logout: builder.mutation<{ ok: boolean }, void>({
@@ -475,6 +482,8 @@ export const {
   useGetCategoriesQuery,
   useGetCurrenciesQuery,
   useGetMeQuery,
+  useLoginMutation,
+  useRegisterMutation,
   useLogoutMutation,
   useGetListingsQuery,
   useGetListingQuery,

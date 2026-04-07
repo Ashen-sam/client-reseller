@@ -1,13 +1,11 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useClerk } from '@clerk/clerk-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { api, useLogoutMutation, useGetMeQuery } from '../store/api';
 import { clearAuth } from '../store/authSlice';
 import { clearAuthToken } from '../lib/authToken';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { signOut } = useClerk();
   const dispatch = useAppDispatch();
   const reduxUser = useAppSelector((s) => s.auth.user);
   const { data: me } = useGetMeQuery(undefined, { refetchOnMountOrArgChange: true });
@@ -33,7 +31,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   async function handleLogout() {
     setMenuOpen(false);
     try {
-      await signOut();
       await logout().unwrap();
     } finally {
       clearAuthToken();
