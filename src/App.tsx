@@ -18,9 +18,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
   const { data, error, isSuccess } = useGetMeQuery(undefined, {
-    skip: !isSignedIn,
+    skip: !isLoaded || !isSignedIn,
     refetchOnMountOrArgChange: true,
   });
 
