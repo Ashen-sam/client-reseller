@@ -1630,7 +1630,8 @@ img {
 }
 
 .field-with-icon input {
-  border: 0;
+  border: none !important;
+  border-color: transparent !important;
   border-radius: 0;
   background: transparent;
   padding: 0.625rem 0;
@@ -1639,11 +1640,18 @@ img {
   outline: none;
 }
 
+.field .field-with-icon input,
+.field .field-with-icon input:hover,
 .field-with-icon input:hover,
-.field-with-icon input:focus {
+.field-with-icon input:focus,
+.field .field-with-icon input:focus,
+.field .field-with-icon input:active,
+.field-with-icon input:active {
   border: none !important;
+  border-color: transparent !important;
   outline: none;
   box-shadow: none !important;
+  background: transparent;
 }
 
 .field-with-icon__toggle {
