@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -12,7 +12,10 @@ const clerkPk = String(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '').trim();
 
 function ClerkTokenBridge() {
   const { getToken } = useAuth();
-  setClerkTokenGetter(async () => (await getToken()) || null);
+  useEffect(() => {
+    setClerkTokenGetter(async (forceRefresh?: boolean) => (await getToken({ skipCache: Boolean(forceRefresh) })) || null);
+    return () => setClerkTokenGetter(null);
+  }, [getToken]);
   return <App />;
 }
 

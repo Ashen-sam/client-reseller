@@ -39,6 +39,7 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
   api,
   extraOptions,
 ) => {
+  const originalUrl = requestUrl(args);
   const clerkToken = await getClerkToken();
   const fallbackToken = getAuthToken();
   const authToken = clerkToken || fallbackToken;
@@ -51,7 +52,23 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
             ? { ...(args.headers as Record<string, string> | undefined), Authorization: `Bearer ${authToken}` }
             : args.headers,
         };
-  const result = await rawBaseQuery(withAuth, api, extraOptions);
+  let result = await rawBaseQuery(withAuth, api, extraOptions);
+  if (result.error?.status === 401 && originalUrl.includes("auth/me")) {
+    const refreshed = await getClerkToken(true);
+    if (refreshed && refreshed !== authToken) {
+      const retryArgs: string | FetchArgs =
+        typeof args === "string"
+          ? { url: args, headers: { Authorization: `Bearer ${refreshed}` } }
+          : {
+              ...args,
+              headers: {
+                ...(args.headers as Record<string, string> | undefined),
+                Authorization: `Bearer ${refreshed}`,
+              },
+            };
+      result = await rawBaseQuery(retryArgs, api, extraOptions);
+    }
+  }
   if (result.error?.status === 401) {
     const u = requestUrl(args);
     if (

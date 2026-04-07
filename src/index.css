@@ -1522,6 +1522,39 @@ img {
   padding: 1.5rem;
 }
 
+.clerk-root-box {
+  width: 100%;
+}
+
+.clerk-root-box .cl-cardBox,
+.clerk-root-box .cl-auth-form {
+  width: 100%;
+}
+
+.clerk-card {
+  width: 100%;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  margin: 0 auto;
+}
+
+.clerk-link {
+  color: var(--color-link) !important;
+}
+
+.clerk-primary-btn {
+  background: var(--color-primary) !important;
+}
+
+.clerk-primary-btn:hover {
+  background: var(--color-primary-hover) !important;
+}
+
+.clerk-social-btn {
+  border-color: var(--color-border) !important;
+}
+
 /* —— Stat cards —— */
 .stat-grid {
   display: grid;

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import { useGetMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
@@ -17,7 +18,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { data, error, isSuccess } = useGetMeQuery();
+  const { isSignedIn } = useAuth();
+  const { data, error, isSuccess } = useGetMeQuery(undefined, {
+    skip: !isSignedIn,
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (isSuccess && data?.user && data.limits) {

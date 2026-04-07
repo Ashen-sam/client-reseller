@@ -2,6 +2,16 @@ import { Navigate } from 'react-router-dom';
 import { SignIn, useAuth } from '@clerk/clerk-react';
 import { useGetMeQuery } from '../store/api';
 
+const clerkAuthAppearance = {
+  elements: {
+    rootBox: 'clerk-root-box',
+    card: 'clerk-card',
+    footerActionLink: 'clerk-link',
+    formButtonPrimary: 'clerk-primary-btn',
+    socialButtonsBlockButton: 'clerk-social-btn',
+  },
+};
+
 export default function LoginPage() {
   const { isSignedIn } = useAuth();
   const { data: me, isLoading } = useGetMeQuery();
@@ -37,6 +47,7 @@ export default function LoginPage() {
           routing="path"
           signUpUrl="/register"
           forceRedirectUrl="/"
+          appearance={clerkAuthAppearance}
         />
       </div>
     </div>
