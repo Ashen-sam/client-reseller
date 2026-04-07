@@ -16,7 +16,7 @@ export default function ProtectedRoute({
     refetchOnMountOrArgChange: true,
   });
 
-  if (!isLoaded || isLoading || isFetching) {
+  if (!isLoaded) {
     return (
       <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
         <p className="text-muted">Loading…</p>
@@ -24,11 +24,24 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!isSignedIn || !data?.user) {
+  if (!isSignedIn) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
-  if (admin && data.user.role !== 'admin') {
+  // For signed-in users, avoid redirect loops while /me is warming up.
+  if (!admin && (isLoading || isFetching || !data?.user)) {
+    return <>{children}</>;
+  }
+
+  if (admin && (isLoading || isFetching || !data?.user)) {
+    return (
+      <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
+        <p className="text-muted">Checking admin access…</p>
+      </div>
+    );
+  }
+
+  if (admin && data?.user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 

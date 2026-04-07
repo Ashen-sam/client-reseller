@@ -4,7 +4,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { useGetMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
-import { clearAuthToken } from './lib/authToken';
+import { api } from './store/api';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ListingDetailPage from './pages/ListingDetailPage';
@@ -32,10 +32,17 @@ export default function App() {
 
   useEffect(() => {
     if (error && 'status' in error && error.status === 401) {
-      clearAuthToken();
       dispatch(clearAuth());
     }
   }, [dispatch, error]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      dispatch(api.util.resetApiState());
+      dispatch(clearAuth());
+    }
+  }, [dispatch, isLoaded, isSignedIn]);
 
   return (
     <Layout>
