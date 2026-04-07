@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Eye, EyeOff, KeyRound, Mail, Phone, Save, UserRound } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, Mail, Phone, Save, Settings, UserRound } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useChangePasswordMutation, useGetMeQuery, useUpdateProfileMutation } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
+import Avatar from '../components/Avatar';
 
 function apiMessage(error: unknown, fallback: string): string {
   if (error && typeof error === 'object' && 'data' in error) {
@@ -59,8 +61,24 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container auth-page" style={{ maxWidth: 760 }}>
-      <section className="auth-shell" style={{ gridTemplateColumns: '1fr' }}>
+    <div className="container">
+      <header className="page-surface page-surface--page-header page-surface--split">
+        <Avatar name={me?.user?.name ?? 'You'} seed={me?.user?.id} size="lg" />
+        <div className="page-surface__grow">
+          <p className="page-header-eyebrow">Account settings</p>
+          <h1 className="page-header-title">
+            <span className="ui-icon-label">
+              <Settings size={20} />
+              Profile
+            </span>
+          </h1>
+          <p className="page-header-subtitle">
+            Manage your personal details and security settings. <Link to="/dashboard">Back to dashboard</Link>
+          </p>
+        </div>
+      </header>
+
+      <section className="auth-shell" style={{ marginTop: '1rem' }}>
         <form className="auth-card auth-card--pro" onSubmit={(e) => void onProfileSubmit(e)}>
           <div className="auth-card__header">
             <p className="auth-card__eyebrow">Account settings</p>
