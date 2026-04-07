@@ -2142,6 +2142,56 @@ a.btn:hover {
   flex-wrap: wrap;
 }
 
+@media (max-width: 640px) {
+  .dashboard-shell__header {
+    align-items: flex-start;
+  }
+
+  .dashboard-shell__identity {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .dashboard-shell__actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-shell__actions .btn {
+    width: 100%;
+  }
+
+  .listing-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .listing-row__main {
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .listing-row__title {
+    font-size: var(--text-lg);
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .listing-row__actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .listing-row__actions .btn {
+    width: 100%;
+  }
+}
+
 /* —— Form page notice —— */
 .form-notice {
   font-size: var(--text-sm);
