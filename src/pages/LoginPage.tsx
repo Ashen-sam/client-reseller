@@ -5,6 +5,7 @@ import { useLoginMutation, useGetMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import { setAuthToken } from '../lib/authToken';
+import PageLoader from '../components/PageLoader';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -17,13 +18,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading: submitting, error }] = useLoginMutation();
 
-  if (isLoading) {
-    return (
-      <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
-        <p className="text-muted">Loading...</p>
-      </div>
-    );
-  }
+  if (isLoading) return <PageLoader message="Preparing login..." />;
 
   if (me?.user) {
     return <Navigate to={from} replace />;
@@ -71,12 +66,12 @@ export default function LoginPage() {
             </p>
           </div>
 
-        {(location.state as { registered?: boolean } | null)?.registered && (
-          <div className="success-banner" role="status">
-            Account created. Sign in with your email and password.
-          </div>
-        )}
-        {error && <div className="error-banner">{msg}</div>}
+          {(location.state as { registered?: boolean } | null)?.registered && (
+            <div className="success-banner" role="status">
+              Account created. Sign in with your email and password.
+            </div>
+          )}
+          {error && <div className="error-banner">{msg}</div>}
 
           <div className="field">
             <label htmlFor="email">Email</label>
@@ -122,6 +117,7 @@ export default function LoginPage() {
           </button>
         </form>
       </section>
+      {submitting && <PageLoader message="Signing you in..." />}
     </div>
   );
 }

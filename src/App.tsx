@@ -15,6 +15,7 @@ import AdminPage from './pages/AdminPage';
 import BillingPage from './pages/BillingPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import PageLoader from './components/PageLoader';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -34,6 +35,10 @@ export default function App() {
       dispatch(clearAuth());
     }
   }, [dispatch, error]);
+
+  if (!data && !error && !isSuccess) {
+    return <PageLoader message="Refreshing your session..." />;
+  }
 
   return (
     <Layout>

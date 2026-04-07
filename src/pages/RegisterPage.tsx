@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag, UserRound } from 'lucide-react';
 import { useRegisterMutation, useGetMeQuery } from '../store/api';
+import PageLoader from '../components/PageLoader';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -12,13 +13,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [register, { isLoading: submitting, error }] = useRegisterMutation();
 
-  if (isLoading || isFetching) {
-    return (
-      <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
-        <p className="text-muted">Loading...</p>
-      </div>
-    );
-  }
+  if (isLoading || isFetching) return <PageLoader message="Preparing registration..." />;
 
   if (me?.user) {
     return <Navigate to="/" replace />;
@@ -64,7 +59,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-        {error && <div className="error-banner">{msg}</div>}
+          {error && <div className="error-banner">{msg}</div>}
           <div className="field">
             <label htmlFor="name">Name</label>
             <div className="field-with-icon">
@@ -124,6 +119,7 @@ export default function RegisterPage() {
           </button>
         </form>
       </section>
+      {submitting && <PageLoader message="Creating your account..." />}
     </div>
   );
 }

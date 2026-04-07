@@ -1946,6 +1946,64 @@ a.btn:hover {
   gap: 0.4rem;
 }
 
+/* —— Global page loader —— */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  background: rgba(245, 245, 247, 0.86);
+  backdrop-filter: blur(3px);
+}
+
+.page-loader--fullscreen {
+  min-height: 100vh;
+}
+
+.page-loader__card {
+  width: min(92vw, 360px);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+}
+
+.page-loader__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.page-loader__spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 3px solid #d8ebe5;
+  border-top-color: var(--color-primary);
+  animation: loader-spin 0.85s linear infinite;
+}
+
+.page-loader__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* —— Dashboard listing rows —— */
 .dashboard-banner {
   display: flex;
