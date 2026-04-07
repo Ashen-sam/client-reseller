@@ -51,6 +51,7 @@ export default function App() {
         <Route path="/listings/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/sso-callback" element={<LoginPage />} />
         <Route
           path="/dashboard"
           element={

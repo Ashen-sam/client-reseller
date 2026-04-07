@@ -18,7 +18,7 @@ export default function LoginPage() {
           path="/login"
           routing="path"
           signUpUrl="/register"
-          forceRedirectUrl="/"
+          fallbackRedirectUrl="/"
           appearance={clerkAuthAppearance}
         />
       </div>
