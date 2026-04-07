@@ -30,7 +30,11 @@ export default function LoginPage() {
       const res = await login({ email, password }).unwrap();
       if (res.token) setAuthToken(res.token);
       dispatch(setSession({ user: res.user, limits: res.limits }));
-      navigate(from, { replace: true });
+      const redirectTo =
+        res.user.role === 'admin' && (!from || from === '/' || from === '/login')
+          ? '/admin'
+          : from;
+      navigate(redirectTo, { replace: true });
     } catch {
       /* handled below */
     }
