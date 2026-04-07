@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { useLoginMutation, useGetMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
@@ -47,63 +48,80 @@ export default function LoginPage() {
 
   return (
     <div className="container auth-page">
-      <header className="page-surface page-surface--auth">
-        <div className="page-surface__inner">
-          <p className="page-header-eyebrow">Welcome back</p>
-          <h1 className="page-header-title" style={{ fontSize: 'var(--text-2xl)' }}>
-            Log in
-          </h1>
-          <p className="page-header-subtitle" style={{ margin: '0 auto', maxWidth: '22rem' }}>
-            Access your dashboard and listings.
-          </p>
-        </div>
-      </header>
-      <p className="text-muted" style={{ marginTop: 0, marginBottom: '1.25rem', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
-        New here? <Link to="/register">Create an account</Link>
-      </p>
-      <form className="auth-card" onSubmit={onSubmit} style={{ display: 'grid', gap: '1rem' }}>
+      <section className="auth-shell">
+        <aside className="auth-brand">
+          <div className="auth-brand__badge">
+            <ShoppingBag size={16} />
+            <span>Reseller</span>
+          </div>
+          <h1 className="auth-brand__title">Sell smarter with a trusted marketplace.</h1>
+          <p className="auth-brand__subtitle">Manage listings, track views, and reach buyers with a clean dashboard experience.</p>
+          <div className="auth-brand__point">
+            <ShieldCheck size={16} />
+            <span>Secure sign in with JWT and protected routes</span>
+          </div>
+        </aside>
+
+        <form className="auth-card auth-card--pro" onSubmit={onSubmit}>
+          <div className="auth-card__header">
+            <p className="auth-card__eyebrow">Welcome back</p>
+            <h2 className="auth-card__title">Log in to your account</h2>
+            <p className="auth-card__subtitle">
+              New here? <Link to="/register">Create an account</Link>
+            </p>
+          </div>
+
         {(location.state as { registered?: boolean } | null)?.registered && (
           <div className="success-banner" role="status">
             Account created. Sign in with your email and password.
           </div>
         )}
         {error && <div className="error-banner">{msg}</div>}
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <div className="field-with-icon">
+              <Mail className="field-with-icon__icon" size={16} />
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-          {submitting ? 'Signing in...' : 'Sign in'}
-        </button>
-      </form>
+
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <div className="field-with-icon">
+              <Lock className="field-with-icon__icon" size={16} />
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="field-with-icon__toggle"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary btn-block auth-submit-btn" disabled={submitting}>
+            <span>{submitting ? 'Signing in...' : 'Sign in'}</span>
+            <ArrowRight size={16} />
+          </button>
+        </form>
+      </section>
     </div>
   );
 }

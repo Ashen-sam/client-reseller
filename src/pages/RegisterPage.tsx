@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag, UserRound } from 'lucide-react';
 import { useRegisterMutation, useGetMeQuery } from '../store/api';
 
 export default function RegisterPage() {
@@ -40,69 +41,89 @@ export default function RegisterPage() {
 
   return (
     <div className="container auth-page">
-      <header className="page-surface page-surface--auth">
-        <div className="page-surface__inner">
-          <p className="page-header-eyebrow">Join Reseller</p>
-          <h1 className="page-header-title" style={{ fontSize: 'var(--text-2xl)' }}>
-            Create account
-          </h1>
-          <p className="page-header-subtitle" style={{ margin: '0 auto', maxWidth: '24rem' }}>
-            List products, upload photos, and connect with buyers.
-          </p>
-        </div>
-      </header>
-      <p className="text-muted" style={{ marginTop: 0, marginBottom: '1.25rem', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-      <form className="auth-card" onSubmit={onSubmit} style={{ display: 'grid', gap: '1rem' }}>
-        {error && <div className="error-banner">{msg}</div>}
-        <div className="field">
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoComplete="name"
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+      <section className="auth-shell">
+        <aside className="auth-brand">
+          <div className="auth-brand__badge">
+            <ShoppingBag size={16} />
+            <span>Reseller</span>
           </div>
-        </div>
-        <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-          {submitting ? 'Creating account...' : 'Create account'}
-        </button>
-      </form>
+          <h1 className="auth-brand__title">Start selling products and services in minutes.</h1>
+          <p className="auth-brand__subtitle">Build trust with buyers and manage your storefront from one professional dashboard.</p>
+          <div className="auth-brand__point">
+            <ShieldCheck size={16} />
+            <span>Secure account creation with protected data</span>
+          </div>
+        </aside>
+
+        <form className="auth-card auth-card--pro" onSubmit={onSubmit}>
+          <div className="auth-card__header">
+            <p className="auth-card__eyebrow">Join Reseller</p>
+            <h2 className="auth-card__title">Create your account</h2>
+            <p className="auth-card__subtitle">
+              Already have an account? <Link to="/login">Log in</Link>
+            </p>
+          </div>
+
+        {error && <div className="error-banner">{msg}</div>}
+          <div className="field">
+            <label htmlFor="name">Name</label>
+            <div className="field-with-icon">
+              <UserRound className="field-with-icon__icon" size={16} />
+              <input
+                id="name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <div className="field-with-icon">
+              <Mail className="field-with-icon__icon" size={16} />
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <div className="field-with-icon">
+              <Lock className="field-with-icon__icon" size={16} />
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="field-with-icon__toggle"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary btn-block auth-submit-btn" disabled={submitting}>
+            <span>{submitting ? 'Creating account...' : 'Create account'}</span>
+            <ArrowRight size={16} />
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
