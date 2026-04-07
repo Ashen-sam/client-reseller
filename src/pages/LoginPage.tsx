@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom';
 import { SignIn, useAuth } from '@clerk/clerk-react';
-import { useGetMeQuery } from '../store/api';
 
 const clerkAuthAppearance = {
   elements: {
@@ -13,9 +12,8 @@ const clerkAuthAppearance = {
 };
 
 export default function LoginPage() {
-  const { isSignedIn } = useAuth();
-  const { data: me, isLoading } = useGetMeQuery();
-  if (isLoading) {
+  const { isLoaded, isSignedIn } = useAuth();
+  if (!isLoaded) {
     return (
       <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
         <p className="text-muted">Loading…</p>
@@ -23,7 +21,7 @@ export default function LoginPage() {
     );
   }
 
-  if (isSignedIn && me?.user) return <Navigate to="/" replace />;
+  if (isSignedIn) return <Navigate to="/" replace />;
 
   return (
     <div className="container auth-page auth-page--clerk-only">
