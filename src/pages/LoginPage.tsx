@@ -1,5 +1,4 @@
-import { Navigate } from 'react-router-dom';
-import { SignIn, useAuth } from '@clerk/clerk-react';
+import { SignIn } from '@clerk/clerk-react';
 
 const clerkAuthAppearance = {
   elements: {
@@ -12,17 +11,6 @@ const clerkAuthAppearance = {
 };
 
 export default function LoginPage() {
-  const { isLoaded, isSignedIn } = useAuth();
-  if (!isLoaded) {
-    return (
-      <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
-        <p className="text-muted">Loading…</p>
-      </div>
-    );
-  }
-
-  if (isSignedIn) return <Navigate to="/" replace />;
-
   return (
     <div className="container auth-page auth-page--clerk-only">
       <div className="auth-card auth-card--clerk-only">
