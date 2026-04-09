@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
 import { getAuthToken } from '../lib/authToken';
 import { useSeo } from '../lib/seo';
-import { useGetCategoriesQuery, useGetListingsQuery, useSessionMeQuery } from '../store/api';
+import { useGetCategoriesQuery, useGetListingsQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
 
@@ -33,7 +33,6 @@ export default function HomePage() {
 
   const { data, isLoading, isFetching, error } = useGetListingsQuery(queryArgs);
   const { data: catData } = useGetCategoriesQuery();
-  const { data: me } = useSessionMeQuery();
   const topicCategories = (catData?.categories ?? []).slice(0, 8);
   useSeo({
     title: 'Marketplace',
@@ -180,7 +179,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <PostListingBanner loggedIn={Boolean(getAuthToken() && me?.user)} />
+      <PostListingBanner loggedIn={Boolean(getAuthToken())} />
 
       {error && (
         <div className="error-banner" style={{ marginBottom: '1rem' }}>

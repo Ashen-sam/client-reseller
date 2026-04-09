@@ -1,5 +1,17 @@
 import { Link } from 'react-router-dom';
-import { BarChart3, CreditCard, Eye, MousePointerClick, PenSquare, PlusCircle, Settings, Trash2, Wrench } from 'lucide-react';
+import {
+  BarChart3,
+  Box,
+  CheckCircle2,
+  CreditCard,
+  Eye,
+  MousePointerClick,
+  PenSquare,
+  PlusCircle,
+  Settings,
+  Trash2,
+  Wrench,
+} from 'lucide-react';
 import {
   useGetMineQuery,
   useGetDashboardStatsQuery,
@@ -20,6 +32,9 @@ export default function DashboardPage() {
   const limits = me?.limits;
   const maxImg = limits?.maxImagesPerListing ?? 3;
   const listings = mine?.listings ?? [];
+  const activeCount = listings.filter((l) => (l.status || 'inStock') === 'inStock').length;
+  const unavailableCount = listings.filter((l) => (l.status || 'inStock') === 'outOfStock').length;
+  const soldOrDoneCount = listings.filter((l) => (l.status || 'inStock') === 'sold').length;
   useSeo({
     title: 'Dashboard',
     description: 'Manage your listings, monitor views and contacts, and update your seller workspace.',
@@ -71,6 +86,21 @@ export default function DashboardPage() {
           <p className="dashboard-banner__hint">Use Billing to unlock more photo capacity and featured credits.</p>
         </div>
       )}
+
+      <div className="dashboard-overview">
+        <div className="dashboard-overview__item">
+          <CheckCircle2 size={15} />
+          <span>{activeCount} active</span>
+        </div>
+        <div className="dashboard-overview__item">
+          <Box size={15} />
+          <span>{unavailableCount} unavailable</span>
+        </div>
+        <div className="dashboard-overview__item">
+          <BarChart3 size={15} />
+          <span>{soldOrDoneCount} sold/completed</span>
+        </div>
+      </div>
 
       <div className="stat-grid">
         <div className="stat-card">

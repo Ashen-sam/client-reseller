@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Camera, Eye, MousePointerClick, Star } from 'lucide-react';
+import { BadgeCheck, Camera, Eye, MousePointerClick, Package, Star, Tag, Wrench } from 'lucide-react';
 import type { Listing } from '../types';
 import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { formatPrice } from '../lib/formatPrice';
@@ -37,9 +37,17 @@ export default function ListingCard({ listing }: { listing: Listing }) {
     >
       <div className="product-card__media">
         <ProductCardCarousel images={imgs} interactive={!isPending} />
+        {listingType === 'product' && listingStatus === 'sold' && (
+          <div className="product-card__sold-ribbon" aria-hidden>
+            <span>SOLD</span>
+          </div>
+        )}
         <div className="product-card__badges">
           <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'} pill--on-media`}>
-            {listingType === 'service' ? 'Service' : 'Product'}
+            <span className="ui-icon-label">
+              {listingType === 'service' ? <Wrench size={12} /> : <Package size={12} />}
+              {listingType === 'service' ? 'Service' : 'Product'}
+            </span>
           </span>
           <span className={`pill pill--on-media ${
             listingStatus === 'sold'
@@ -48,9 +56,17 @@ export default function ListingCard({ listing }: { listing: Listing }) {
                 ? 'pill--status-out'
                 : 'pill--status-in'
           }`}>
-            {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
+            <span className="ui-icon-label">
+              <BadgeCheck size={12} />
+              {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
+            </span>
           </span>
-          <span className="pill pill--on-media">{categoryLabel(listing.category)}</span>
+          <span className="pill pill--on-media">
+            <span className="ui-icon-label">
+              <Tag size={12} />
+              {categoryLabel(listing.category)}
+            </span>
+          </span>
           {listing.featured && (
             <span className="pill pill--featured pill--on-media" style={{ marginLeft: 'auto' }}>
               <span className="ui-icon-label"><Star size={12} />Featured</span>
