@@ -113,6 +113,22 @@ export default function DashboardPage() {
                     <span className={`pill ${(l.type || 'product') === 'service' ? 'pill--service' : 'pill--product'}`}>
                       {(l.type || 'product') === 'service' ? 'Service' : 'Product'}
                     </span>
+                    {' '}
+                    <span
+                      className={`pill ${
+                        (l.status || 'inStock') === 'sold'
+                          ? 'pill--status-sold'
+                          : (l.status || 'inStock') === 'outOfStock'
+                            ? 'pill--status-out'
+                            : 'pill--status-in'
+                      }`}
+                    >
+                      {(l.status || 'inStock') === 'sold'
+                        ? 'Sold'
+                        : (l.status || 'inStock') === 'outOfStock'
+                          ? 'Out of stock'
+                          : 'In stock'}
+                    </span>
                   </p>
                   <p className="listing-row__price">{formatPrice(l.price, l.currency || 'USD')}</p>
                   <p className="listing-row__meta">

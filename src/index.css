@@ -1948,6 +1948,24 @@ a.btn:hover {
   border-color: rgba(0, 128, 96, 0.24);
 }
 
+.pill--status-in {
+  background: #e7f8ef;
+  color: #0a6e4e;
+  border-color: rgba(0, 128, 96, 0.24);
+}
+
+.pill--status-out {
+  background: #fff4e6;
+  color: #9a5700;
+  border-color: rgba(200, 120, 0, 0.28);
+}
+
+.pill--status-sold {
+  background: #feeceb;
+  color: #a2331f;
+  border-color: rgba(180, 46, 18, 0.28);
+}
+
 .pill--on-media {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(4px);

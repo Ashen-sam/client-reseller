@@ -45,6 +45,7 @@ export interface Listing {
   price: number;
   currency: string;
   type?: 'product' | 'service';
+  status?: 'inStock' | 'outOfStock' | 'sold';
   category: string;
   featured?: boolean;
   images: string[];

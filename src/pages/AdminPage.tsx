@@ -63,6 +63,7 @@ export default function AdminPage() {
   const [lPrice, setLPrice] = useState('');
   const [lCategory, setLCategory] = useState('other');
   const [lType, setLType] = useState<'product' | 'service'>('product');
+  const [lStatus, setLStatus] = useState<'inStock' | 'outOfStock' | 'sold'>('inStock');
   const [lCurrency, setLCurrency] = useState('USD');
   const [lPhone, setLPhone] = useState('');
   const [lWa, setLWa] = useState('');
@@ -109,6 +110,7 @@ export default function AdminPage() {
     fd.append('price', lPrice);
     fd.append('category', lCategory);
     fd.append('type', lType);
+    fd.append('status', lStatus);
     fd.append('currency', lCurrency);
     fd.append('phone', lPhone.trim());
     fd.append('whatsapp', lWa.trim());
@@ -120,6 +122,7 @@ export default function AdminPage() {
       setLTitle('');
       setLDesc('');
       setLPrice('');
+      setLStatus('inStock');
       setLPhone('');
       setLWa('');
       setLEmail('');
@@ -409,6 +412,18 @@ export default function AdminPage() {
                         <option value="service">Service</option>
                       </select>
                     </div>
+                    <div className="field">
+                      <label htmlFor="al-status">Availability</label>
+                      <select
+                        id="al-status"
+                        value={lStatus}
+                        onChange={(e) => setLStatus(e.target.value as 'inStock' | 'outOfStock' | 'sold')}
+                      >
+                        <option value="inStock">In stock</option>
+                        <option value="outOfStock">Out of stock</option>
+                        <option value="sold">Sold</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="admin-console__form-row">
                     <div className="field">
@@ -459,6 +474,7 @@ export default function AdminPage() {
                             <th>Listing</th>
                             <th>Seller</th>
                             <th>Type</th>
+                            <th>Status</th>
                             <th>Price</th>
                             <th>Views</th>
                             <th />
@@ -481,6 +497,23 @@ export default function AdminPage() {
                               <td>
                                 <span className={`pill ${(l.type || 'product') === 'service' ? 'pill--service' : 'pill--product'}`}>
                                   {(l.type || 'product') === 'service' ? 'Service' : 'Product'}
+                                </span>
+                              </td>
+                              <td>
+                                <span
+                                  className={`pill ${
+                                    (l.status || 'inStock') === 'sold'
+                                      ? 'pill--status-sold'
+                                      : (l.status || 'inStock') === 'outOfStock'
+                                        ? 'pill--status-out'
+                                        : 'pill--status-in'
+                                  }`}
+                                >
+                                  {(l.status || 'inStock') === 'sold'
+                                    ? 'Sold'
+                                    : (l.status || 'inStock') === 'outOfStock'
+                                      ? 'Out of stock'
+                                      : 'In stock'}
                                 </span>
                               </td>
                               <td>{formatPrice(l.price, l.currency || 'USD')}</td>

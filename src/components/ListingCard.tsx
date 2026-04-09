@@ -13,6 +13,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const isPending = listing.id.startsWith('optimistic-');
   const imgs = listing.images?.length ? listing.images : [];
   const listingType = listing.type || 'product';
+  const listingStatus = listing.status || 'inStock';
 
   function open() {
     if (!isPending) navigate(`/listings/${listing.id}`);
@@ -38,6 +39,15 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <div className="product-card__badges">
           <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'} pill--on-media`}>
             {listingType === 'service' ? 'Service' : 'Product'}
+          </span>
+          <span className={`pill pill--on-media ${
+            listingStatus === 'sold'
+              ? 'pill--status-sold'
+              : listingStatus === 'outOfStock'
+                ? 'pill--status-out'
+                : 'pill--status-in'
+          }`}>
+            {listingStatus === 'sold' ? 'Sold' : listingStatus === 'outOfStock' ? 'Out of stock' : 'In stock'}
           </span>
           <span className="pill pill--on-media">{categoryLabel(listing.category)}</span>
           {listing.featured && (

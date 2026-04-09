@@ -43,6 +43,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [listingType, setListingType] = useState<'product' | 'service'>('product');
+  const [listingStatus, setListingStatus] = useState<'inStock' | 'outOfStock' | 'sold'>('inStock');
   const [currency, setCurrency] = useState('USD');
   const [category, setCategory] = useState('other');
   const [phone, setPhone] = useState('');
@@ -66,6 +67,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
     setDescription(listing.description);
     setPrice(String(listing.price));
     setListingType((listing.type as 'product' | 'service') || 'product');
+    setListingStatus((listing.status as 'inStock' | 'outOfStock' | 'sold') || 'inStock');
     setCurrency(listing.currency || 'USD');
     setCategory(listing.category);
     setPhone(listing.contact.phone);
@@ -116,6 +118,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
     fd.append('description', description.trim());
     fd.append('price', price);
     fd.append('type', listingType);
+    fd.append('status', listingStatus);
     fd.append('currency', currency);
     fd.append('category', category);
     fd.append('phone', phone.trim());
@@ -349,6 +352,19 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="status">Availability</label>
+            <select
+              id="status"
+              value={listingStatus}
+              onChange={(e) => setListingStatus(e.target.value as 'inStock' | 'outOfStock' | 'sold')}
+            >
+              <option value="inStock">In stock</option>
+              <option value="outOfStock">Out of stock</option>
+              <option value="sold">Sold</option>
+            </select>
           </div>
 
           <div className="field">

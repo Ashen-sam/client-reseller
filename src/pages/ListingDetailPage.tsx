@@ -89,6 +89,7 @@ export default function ListingDetailPage() {
   const sellerId = listing.seller?.id ?? sellerName;
   const sellerPhone = contact.phone?.trim() || '';
   const listingType = listing.type || 'product';
+  const listingStatus = listing.status || 'inStock';
 
   return (
     <div className="container">
@@ -149,6 +150,17 @@ export default function ListingDetailPage() {
             <div className="pdp__pill-row">
               <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'}`}>
                 {listingType === 'service' ? 'Service' : 'Product'}
+              </span>
+              <span
+                className={`pill ${
+                  listingStatus === 'sold'
+                    ? 'pill--status-sold'
+                    : listingStatus === 'outOfStock'
+                      ? 'pill--status-out'
+                      : 'pill--status-in'
+                }`}
+              >
+                {listingStatus === 'sold' ? 'Sold' : listingStatus === 'outOfStock' ? 'Out of stock' : 'In stock'}
               </span>
               <span className="pill">{categoryLabel(listing.category)}</span>
               {listing.featured && <span className="pill pill--featured">Featured</span>}
