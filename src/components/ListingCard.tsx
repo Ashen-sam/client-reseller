@@ -1,13 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { BadgeCheck, Camera, Eye, MousePointerClick, Package, Star, Tag, Wrench } from 'lucide-react';
+import { Camera, Eye, MousePointerClick } from 'lucide-react';
 import type { Listing } from '../types';
-import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { formatPrice } from '../lib/formatPrice';
 import ProductCardCarousel from './ProductCardCarousel';
-
-function categoryLabel(c: string) {
-  return c.charAt(0).toUpperCase() + c.slice(1);
-}
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   const navigate = useNavigate();
@@ -15,6 +10,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const imgs = listing.images?.length ? listing.images : [];
   const listingType = listing.type || 'product';
   const listingStatus = listing.status || 'inStock';
+  const inStock = listingStatus === 'inStock';
 
   function open() {
     if (!isPending) navigate(`/listings/${listing.id}`);
@@ -43,35 +39,11 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           </div>
         )}
         <div className="product-card__badges">
-          <span className={`pill ${listingType === 'service' ? 'pill--service' : 'pill--product'} pill--on-media`}>
-            <span className="ui-icon-label">
-              {listingType === 'service' ? <Wrench size={12} /> : <Package size={12} />}
-              {listingType === 'service' ? 'Service' : 'Product'}
-            </span>
-          </span>
           <span className={`pill pill--on-media ${
-            listingStatus === 'sold'
-              ? 'pill--status-sold'
-              : listingStatus === 'outOfStock'
-                ? 'pill--status-out'
-                : 'pill--status-in'
+            inStock ? 'pill--status-in' : 'pill--status-out'
           }`}>
-            <span className="ui-icon-label">
-              <BadgeCheck size={12} />
-              {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
-            </span>
+            {inStock ? 'In stock' : 'Out of stock'}
           </span>
-          <span className="pill pill--on-media">
-            <span className="ui-icon-label">
-              <Tag size={12} />
-              {categoryLabel(listing.category)}
-            </span>
-          </span>
-          {listing.featured && (
-            <span className="pill pill--featured pill--on-media" style={{ marginLeft: 'auto' }}>
-              <span className="ui-icon-label"><Star size={12} />Featured</span>
-            </span>
-          )}
         </div>
       </div>
       <div className="product-card__body">
