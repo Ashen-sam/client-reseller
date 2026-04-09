@@ -288,7 +288,12 @@ export const api = createApi({
 
     updateProfile: builder.mutation<
       MeResponse,
-      { name: string; email: string; phone?: string }
+      {
+        name: string;
+        email: string;
+        phone?: string;
+        avatarStyle?: "adventurer" | "avataaars" | "bottts" | "identicon" | "lorelei";
+      }
     >({
       query: (body) => ({
         url: "api/auth/profile",

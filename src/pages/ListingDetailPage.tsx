@@ -266,7 +266,12 @@ export default function ListingDetailPage() {
               </span>
             </h2>
             <div className="person-card">
-              <Avatar name={sellerName} seed={sellerId} size="lg" />
+              <Avatar
+                name={sellerName}
+                seed={sellerId}
+                avatarStyle={listing.seller?.avatarStyle}
+                size="lg"
+              />
               <div className="person-card__body">
                 <p className="person-card__label">Listed by</p>
                 <p className="person-card__name">{sellerName}</p>
@@ -307,7 +312,12 @@ export default function ListingDetailPage() {
                 You
               </h2>
               <div className="person-card">
-                <Avatar name={me.user.name} seed={me.user.id} size="lg" />
+                <Avatar
+                  name={me.user.name}
+                  seed={me.user.id}
+                  avatarStyle={me.user.avatarStyle}
+                  size="lg"
+                />
                 <div className="person-card__body">
                   <p className="person-card__label">Signed in as</p>
                   <p className="person-card__name">{me.user.name}</p>

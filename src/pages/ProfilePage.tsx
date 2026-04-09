@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, KeyRound, Mail, Phone, Save, Settings, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { AVATAR_STYLES, AVATAR_STYLE_LABELS, type AvatarStyle } from '../lib/avatarStyles';
 import { useSeo } from '../lib/seo';
 import { useChangePasswordMutation, useSessionMeQuery, useUpdateProfileMutation } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
@@ -26,6 +27,7 @@ export default function ProfilePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>('adventurer');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showCurrent, setShowCurrent] = useState(false);
@@ -44,6 +46,7 @@ export default function ProfilePage() {
     setName(me.user.name || '');
     setEmail(me.user.email || '');
     setPhone(me.user.phone || '');
+    setAvatarStyle((me.user.avatarStyle as AvatarStyle) || 'adventurer');
   }, [me?.user]);
 
   async function onProfileSubmit(e: React.FormEvent) {
@@ -53,6 +56,7 @@ export default function ProfilePage() {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       phone: phone.trim(),
+      avatarStyle,
     }).unwrap();
     dispatch(setSession({ user: res.user, limits: res.limits }));
     setProfileOk('Profile updated successfully.');
@@ -70,7 +74,12 @@ export default function ProfilePage() {
   return (
     <div className="container">
       <header className="page-surface page-surface--page-header page-surface--split">
-        <Avatar name={me?.user?.name ?? 'You'} seed={me?.user?.id} size="lg" />
+        <Avatar
+          name={me?.user?.name ?? 'You'}
+          seed={me?.user?.id}
+          avatarStyle={avatarStyle}
+          size="lg"
+        />
         <div className="page-surface__grow">
           <p className="page-header-eyebrow">Account settings</p>
           <h1 className="page-header-title">
@@ -126,6 +135,24 @@ export default function ProfilePage() {
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="94771234567"
               />
+            </div>
+          </div>
+          <div className="field">
+            <label>Avatar style</label>
+            <div className="avatar-picker" role="radiogroup" aria-label="Select avatar style">
+              {AVATAR_STYLES.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`avatar-picker__item${avatarStyle === s ? ' is-active' : ''}`}
+                  onClick={() => setAvatarStyle(s)}
+                  role="radio"
+                  aria-checked={avatarStyle === s}
+                >
+                  <Avatar name={name || me?.user?.name || 'You'} seed={me?.user?.id || email || 'me'} avatarStyle={s} size="sm" />
+                  <span>{AVATAR_STYLE_LABELS[s]}</span>
+                </button>
+              ))}
             </div>
           </div>
           <button type="submit" className="btn btn-primary auth-submit-btn" disabled={savingProfile}>

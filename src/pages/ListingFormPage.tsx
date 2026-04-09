@@ -199,7 +199,12 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
   return (
     <div className="container container--wide product-form-page">
       <header className="page-surface page-surface--page-header page-surface--split">
-        <Avatar name={me?.user?.name ?? 'Seller'} seed={me?.user?.id} size="lg" />
+        <Avatar
+          name={me?.user?.name ?? 'Seller'}
+          seed={me?.user?.id}
+          avatarStyle={me?.user?.avatarStyle}
+          size="lg"
+        />
         <div className="page-surface__grow">
           <p className="page-header-eyebrow">{mode === 'create' ? 'New listing' : 'Update listing'}</p>
           <h1 className="page-header-title">

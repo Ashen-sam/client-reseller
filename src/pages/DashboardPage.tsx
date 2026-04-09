@@ -46,7 +46,12 @@ export default function DashboardPage() {
     <div className="container">
       <header className="page-surface page-surface--page-header dashboard-shell__header">
         <div className="dashboard-shell__identity">
-          <Avatar name={me?.user?.name ?? 'You'} seed={me?.user?.id} size="lg" />
+          <Avatar
+            name={me?.user?.name ?? 'You'}
+            seed={me?.user?.id}
+            avatarStyle={me?.user?.avatarStyle}
+            size="lg"
+          />
           <div className="page-surface__grow">
             <p className="page-header-eyebrow">Seller workspace</p>
             <h1 className="page-header-title">Dashboard</h1>
