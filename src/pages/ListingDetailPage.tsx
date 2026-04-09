@@ -199,16 +199,6 @@ export default function ListingDetailPage() {
           <section className="pdp__content-card">
             <h2 className="pdp__section-title">
               <span className="ui-icon-label">
-                <FileText size={16} />
-                Description
-              </span>
-            </h2>
-            <p className="pdp__description">{listing.description}</p>
-          </section>
-
-          <section className="pdp__content-card">
-            <h2 className="pdp__section-title">
-              <span className="ui-icon-label">
                 <TrendingUp size={16} />
                 Listing performance
               </span>
@@ -257,6 +247,16 @@ export default function ListingDetailPage() {
             </p>
             <p className="pdp__price pdp__price--aside-only">{formatPrice(listing.price, listing.currency || 'USD')}</p>
           </div>
+
+          <section className="pdp__content-card pdp__content-card--aside">
+            <h2 className="pdp__section-title" style={{ marginTop: 0 }}>
+              <span className="ui-icon-label">
+                <FileText size={16} />
+                Description
+              </span>
+            </h2>
+            <p className="pdp__description">{listing.description}</p>
+          </section>
 
           <div className="pdp__aside-block">
             <h2 className="pdp__section-title" style={{ marginTop: 0 }}>
