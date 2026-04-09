@@ -95,7 +95,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <section className="auth-shell" style={{ marginTop: '1rem' }}>
+      <section className="auth-shell profile-shell" style={{ marginTop: '1rem' }}>
         <form className="auth-card auth-card--pro" onSubmit={(e) => void onProfileSubmit(e)}>
           <div className="auth-card__header">
             <p className="auth-card__eyebrow">Account settings</p>

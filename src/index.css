@@ -754,7 +754,7 @@ img {
   border: 1px solid var(--color-border);
   background: var(--color-bg-subtle);
   border-radius: var(--radius-sm);
-  padding: 0.65rem 0.8rem;
+  padding: 0.6rem 0.75rem;
 }
 
 .profile-security-note__title {
@@ -775,7 +775,7 @@ img {
 .profile-security-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 @media (min-width: 900px) {
@@ -1875,6 +1875,15 @@ img {
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   align-items: stretch;
+}
+
+/* Profile settings cards should size to content. */
+.profile-shell {
+  align-items: start;
+}
+
+.profile-shell .auth-card {
+  height: auto;
 }
 
 .auth-brand {
