@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag, UserRound } from 'lucide-react';
 import { getAuthToken } from '../lib/authToken';
+import { useSeo } from '../lib/seo';
 import { useRegisterMutation, useSessionMeQuery } from '../store/api';
 import PageLoader from '../components/PageLoader';
 
@@ -13,6 +14,12 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [register, { isLoading: submitting, error }] = useRegisterMutation();
+  useSeo({
+    title: 'Create Account',
+    description: 'Create your Reseller account to start listing products and services in minutes.',
+    path: '/register',
+    noindex: true,
+  });
 
   if (getAuthToken() && isLoading) return <PageLoader message="Preparing registration..." />;
 

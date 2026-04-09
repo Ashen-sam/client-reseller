@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
 import { getAuthToken } from '../lib/authToken';
+import { useSeo } from '../lib/seo';
 import { useGetCategoriesQuery, useGetListingsQuery, useSessionMeQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
@@ -34,6 +35,12 @@ export default function HomePage() {
   const { data: catData } = useGetCategoriesQuery();
   const { data: me } = useSessionMeQuery();
   const topicCategories = (catData?.categories ?? []).slice(0, 8);
+  useSeo({
+    title: 'Marketplace',
+    description:
+      'Discover products and services from independent sellers. Filter by type, category, and price on Reseller.',
+    path: '/',
+  });
 
   return (
     <div className="container">

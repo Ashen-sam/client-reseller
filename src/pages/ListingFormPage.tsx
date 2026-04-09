@@ -9,6 +9,7 @@ import {
   useSessionMeQuery,
 } from '../store/api';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { useSeo } from '../lib/seo';
 import Avatar from '../components/Avatar';
 
 type Mode = 'create' | 'edit';
@@ -56,6 +57,15 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
   const [featured, setFeatured] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  useSeo({
+    title: mode === 'create' ? 'Create Listing' : 'Edit Listing',
+    description:
+      mode === 'create'
+        ? 'Publish a new product or service listing with images, pricing, and contact details.'
+        : 'Update your listing details, availability, images, and contact information.',
+    path: mode === 'edit' && id ? `/listings/${id}/edit` : '/sell',
+    noindex: true,
+  });
 
   const listing = existing?.listing;
   const tokens = me?.user.featuredTokens ?? 0;

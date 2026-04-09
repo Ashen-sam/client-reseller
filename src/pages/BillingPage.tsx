@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { BadgeCheck, CreditCard, ShoppingCart } from 'lucide-react';
+import { useSeo } from '../lib/seo';
 import { useSessionMeQuery, usePurchaseProductMutation } from '../store/api';
 
 export default function BillingPage() {
@@ -8,6 +9,12 @@ export default function BillingPage() {
 
   const limits = me?.limits;
   const products = limits?.products ?? [];
+  useSeo({
+    title: 'Billing',
+    description: 'Manage billing add-ons and upgrade listing limits in your Reseller account.',
+    path: '/billing',
+    noindex: true,
+  });
 
   async function buy(productId: string) {
     try {

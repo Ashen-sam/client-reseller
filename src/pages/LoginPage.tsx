@@ -6,6 +6,7 @@ import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import { getAuthToken, setAuthToken } from '../lib/authToken';
 import PageLoader from '../components/PageLoader';
+import { useSeo } from '../lib/seo';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -17,6 +18,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading: submitting, error }] = useLoginMutation();
+  useSeo({
+    title: 'Log In',
+    description: 'Log in to your Reseller account to manage listings, profile settings, and dashboard insights.',
+    path: '/login',
+    noindex: true,
+  });
 
   if (getAuthToken() && isLoading) return <PageLoader message="Preparing login..." />;
 

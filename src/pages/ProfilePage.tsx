@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, KeyRound, Mail, Phone, Save, Settings, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSeo } from '../lib/seo';
 import { useChangePasswordMutation, useSessionMeQuery, useUpdateProfileMutation } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
@@ -31,6 +32,12 @@ export default function ProfilePage() {
   const [showNew, setShowNew] = useState(false);
   const [profileOk, setProfileOk] = useState('');
   const [passwordOk, setPasswordOk] = useState('');
+  useSeo({
+    title: 'Profile Settings',
+    description: 'Update your profile information and password settings for your Reseller account.',
+    path: '/profile',
+    noindex: true,
+  });
 
   useEffect(() => {
     if (!me?.user) return;

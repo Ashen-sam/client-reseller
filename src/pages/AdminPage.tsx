@@ -21,6 +21,7 @@ import {
   useGetCurrenciesQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
+import { useSeo } from '../lib/seo';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 type AdminTab = 'overview' | 'listings' | 'users';
@@ -72,6 +73,12 @@ export default function AdminPage() {
   const [lFeatured, setLFeatured] = useState(false);
   const [listFormErr, setListFormErr] = useState('');
   const [listFormOk, setListFormOk] = useState('');
+  useSeo({
+    title: 'Admin Panel',
+    description: 'Admin control center for users, listings, and marketplace operations.',
+    path: '/admin',
+    noindex: true,
+  });
 
   const users = usersData?.users ?? [];
   const currencies = curData?.currencies ?? ['USD', 'LKR', 'EUR', 'GBP', 'INR', 'AUD'];

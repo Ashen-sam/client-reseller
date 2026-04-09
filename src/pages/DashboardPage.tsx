@@ -7,6 +7,7 @@ import {
   useSessionMeQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
+import { useSeo } from '../lib/seo';
 import Avatar from '../components/Avatar';
 
 export default function DashboardPage() {
@@ -18,6 +19,12 @@ export default function DashboardPage() {
   const limits = me?.limits;
   const maxImg = limits?.maxImagesPerListing ?? 3;
   const listings = mine?.listings ?? [];
+  useSeo({
+    title: 'Dashboard',
+    description: 'Manage your listings, monitor views and contacts, and update your seller workspace.',
+    path: '/dashboard',
+    noindex: true,
+  });
 
   return (
     <div className="container">
