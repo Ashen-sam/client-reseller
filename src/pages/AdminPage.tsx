@@ -21,6 +21,11 @@ import {
   useGetCurrenciesQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
+import {
+  listingAvailabilityFieldLabel,
+  listingStatusFormOptions,
+  listingStatusLabel,
+} from '../lib/listingStatusLabels';
 import { useSeo } from '../lib/seo';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -420,15 +425,17 @@ export default function AdminPage() {
                       </select>
                     </div>
                     <div className="field">
-                      <label htmlFor="al-status">Availability</label>
+                      <label htmlFor="al-status">{listingAvailabilityFieldLabel(lType)}</label>
                       <select
                         id="al-status"
                         value={lStatus}
                         onChange={(e) => setLStatus(e.target.value as 'inStock' | 'outOfStock' | 'sold')}
                       >
-                        <option value="inStock">In stock</option>
-                        <option value="outOfStock">Out of stock</option>
-                        <option value="sold">Sold</option>
+                        {listingStatusFormOptions(lType).map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -481,7 +488,7 @@ export default function AdminPage() {
                             <th>Listing</th>
                             <th>Seller</th>
                             <th>Type</th>
-                            <th>Status</th>
+                            <th>Availability</th>
                             <th>Price</th>
                             <th>Views</th>
                             <th />
@@ -516,11 +523,7 @@ export default function AdminPage() {
                                         : 'pill--status-in'
                                   }`}
                                 >
-                                  {(l.status || 'inStock') === 'sold'
-                                    ? 'Sold'
-                                    : (l.status || 'inStock') === 'outOfStock'
-                                      ? 'Out of stock'
-                                      : 'In stock'}
+                                  {listingStatusLabel(l.status, (l.type || 'product') === 'service' ? 'service' : 'product')}
                                 </span>
                               </td>
                               <td>{formatPrice(l.price, l.currency || 'USD')}</td>

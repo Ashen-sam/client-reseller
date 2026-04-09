@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Camera, Eye, MousePointerClick, Star } from 'lucide-react';
 import type { Listing } from '../types';
+import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { formatPrice } from '../lib/formatPrice';
 import ProductCardCarousel from './ProductCardCarousel';
 
@@ -47,7 +48,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
                 ? 'pill--status-out'
                 : 'pill--status-in'
           }`}>
-            {listingStatus === 'sold' ? 'Sold' : listingStatus === 'outOfStock' ? 'Out of stock' : 'In stock'}
+            {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
           </span>
           <span className="pill pill--on-media">{categoryLabel(listing.category)}</span>
           {listing.featured && (

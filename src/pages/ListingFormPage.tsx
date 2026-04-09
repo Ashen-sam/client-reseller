@@ -9,6 +9,11 @@ import {
   useSessionMeQuery,
 } from '../store/api';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import {
+  listingAvailabilityFieldHint,
+  listingAvailabilityFieldLabel,
+  listingStatusFormOptions,
+} from '../lib/listingStatusLabels';
 import { useSeo } from '../lib/seo';
 import Avatar from '../components/Avatar';
 
@@ -365,16 +370,21 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
           </div>
 
           <div className="field">
-            <label htmlFor="status">Availability</label>
+            <label htmlFor="status">{listingAvailabilityFieldLabel(listingType)}</label>
             <select
               id="status"
               value={listingStatus}
               onChange={(e) => setListingStatus(e.target.value as 'inStock' | 'outOfStock' | 'sold')}
             >
-              <option value="inStock">In stock</option>
-              <option value="outOfStock">Out of stock</option>
-              <option value="sold">Sold</option>
+              {listingStatusFormOptions(listingType).map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
             </select>
+            <p className="text-muted" style={{ margin: '0.35rem 0 0', fontSize: 'var(--text-xs)' }}>
+              {listingAvailabilityFieldHint(listingType)}
+            </p>
           </div>
 
           <div className="field">

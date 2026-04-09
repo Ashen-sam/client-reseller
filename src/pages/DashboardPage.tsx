@@ -7,6 +7,7 @@ import {
   useSessionMeQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
+import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { useSeo } from '../lib/seo';
 import Avatar from '../components/Avatar';
 
@@ -130,11 +131,7 @@ export default function DashboardPage() {
                             : 'pill--status-in'
                       }`}
                     >
-                      {(l.status || 'inStock') === 'sold'
-                        ? 'Sold'
-                        : (l.status || 'inStock') === 'outOfStock'
-                          ? 'Out of stock'
-                          : 'In stock'}
+                      {listingStatusLabel(l.status, (l.type || 'product') === 'service' ? 'service' : 'product')}
                     </span>
                   </p>
                   <p className="listing-row__price">{formatPrice(l.price, l.currency || 'USD')}</p>

@@ -7,6 +7,7 @@ import {
   useSessionMeQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
+import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { seoSiteUrl, setJsonLd, useSeo } from '../lib/seo';
 import Avatar from '../components/Avatar';
 import PostListingBanner from '../components/PostListingBanner';
@@ -198,7 +199,7 @@ export default function ListingDetailPage() {
                       : 'pill--status-in'
                 }`}
               >
-                {listingStatus === 'sold' ? 'Sold' : listingStatus === 'outOfStock' ? 'Out of stock' : 'In stock'}
+                {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
               </span>
               <span className="pill">{categoryLabel(listing.category)}</span>
               {listing.featured && <span className="pill pill--featured">Featured</span>}
