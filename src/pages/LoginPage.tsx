@@ -80,7 +80,7 @@ export default function LoginPage() {
           )}
           {error && <div className="error-banner">{msg}</div>}
 
-          <div className="admin-login-hint" role="region" aria-label="System administrator demo login">
+          {/* <div className="admin-login-hint" role="region" aria-label="System administrator demo login">
             <p className="admin-login-hint__title">System administrator (single account)</p>
             <p className="admin-login-hint__meta">
               Email <code>{SYSTEM_ADMIN_LOGIN.email}</code> · Password <code>{SYSTEM_ADMIN_LOGIN.password}</code>
@@ -99,7 +99,7 @@ export default function LoginPage() {
             <p className="admin-login-hint__warn">
               Change this password in production after first login (Profile → security).
             </p>
-          </div>
+          </div> */}
 
           <div className="field">
             <label htmlFor="email">Email</label>
