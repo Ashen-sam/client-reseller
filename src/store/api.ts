@@ -7,6 +7,7 @@ import type {
   ListingsQueryArgs,
   ListingsResponse,
   MeResponse,
+  SellerSummaryResponse,
   User,
 } from "../types";
 import { clearAuthToken, getAuthToken, setAuthToken } from "../lib/authToken";
@@ -381,6 +382,10 @@ export const api = createApi({
       providesTags: (_r, _e, id) => [{ type: "Listing", id }],
     }),
 
+    getSellerSummary: builder.query<SellerSummaryResponse, string>({
+      query: (id) => `api/listings/${id}/seller-summary`,
+    }),
+
     getMine: builder.query<{ listings: Listing[] }, void>({
       query: () => "api/listings/mine",
       transformResponse: (res: { listings: Listing[] }) => ({
@@ -609,6 +614,7 @@ export const {
   useChangePasswordMutation,
   useGetListingsQuery,
   useGetListingQuery,
+  useGetSellerSummaryQuery,
   useGetMineQuery,
   useGetDashboardStatsQuery,
   useRecordViewMutation,

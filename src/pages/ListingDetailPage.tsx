@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CircleUserRound, FileText, ImageIcon, PhoneCall } from 'lucide-react';
+import { CircleUserRound, FileText, ImageIcon, PhoneCall, Star, TrendingUp, Users } from 'lucide-react';
 import {
   useGetListingQuery,
+  useGetSellerSummaryQuery,
   useRecordViewMutation,
   useRecordContactClickMutation,
   useSessionMeQuery,
@@ -20,6 +21,7 @@ function categoryLabel(c: string) {
 export default function ListingDetailPage() {
   const { id = '' } = useParams();
   const { data, isLoading, error } = useGetListingQuery(id, { skip: !id });
+  const { data: sellerSummary } = useGetSellerSummaryQuery(id, { skip: !id });
   const { data: me } = useSessionMeQuery();
   const [recordView] = useRecordViewMutation();
   const [recordContact] = useRecordContactClickMutation();
@@ -131,6 +133,12 @@ export default function ListingDetailPage() {
   const sellerName = listing.seller?.name ?? 'Seller';
   const sellerId = listing.seller?.id ?? sellerName;
   const sellerPhone = contact.phone?.trim() || '';
+  const memberSince = sellerSummary?.seller.memberSince
+    ? new Date(sellerSummary.seller.memberSince).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+      })
+    : null;
   return (
     <div className="container">
       <section className="page-surface page-surface--compact">
@@ -197,6 +205,31 @@ export default function ListingDetailPage() {
             </h2>
             <p className="pdp__description">{listing.description}</p>
           </section>
+
+          <section className="pdp__content-card">
+            <h2 className="pdp__section-title">
+              <span className="ui-icon-label">
+                <TrendingUp size={16} />
+                Listing performance
+              </span>
+            </h2>
+            <div className="pdp__mini-stats">
+              <div className="pdp__mini-stat">
+                <p className="pdp__mini-stat-label">Views</p>
+                <p className="pdp__mini-stat-value">{listing.views}</p>
+              </div>
+              <div className="pdp__mini-stat">
+                <p className="pdp__mini-stat-label">Contacts</p>
+                <p className="pdp__mini-stat-value">{listing.contactClicks}</p>
+              </div>
+              <div className="pdp__mini-stat">
+                <p className="pdp__mini-stat-label">Status</p>
+                <p className="pdp__mini-stat-value">
+                  {listingStatusLabel(listingStatus, listingType === 'service' ? 'service' : 'product')}
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
 
         <aside className="pdp__aside">
@@ -242,6 +275,30 @@ export default function ListingDetailPage() {
                 )}
               </div>
             </div>
+            {sellerSummary && (
+              <div className="seller-metrics">
+                <div className="seller-metrics__rating">
+                  <span className="ui-icon-label">
+                    <Star size={14} />
+                    {sellerSummary.stats.rating.toFixed(1)}
+                  </span>
+                  <span>({sellerSummary.stats.reviewCount} reviews)</span>
+                </div>
+                <div className="seller-metrics__grid">
+                  <div className="seller-metrics__item">
+                    <Users size={14} />
+                    <span>{sellerSummary.stats.listingCount} listings</span>
+                  </div>
+                  <div className="seller-metrics__item">
+                    <TrendingUp size={14} />
+                    <span>{sellerSummary.stats.totalViews} total views</span>
+                  </div>
+                </div>
+                <p className="seller-metrics__meta">
+                  {memberSince ? `Member since ${memberSince}` : 'Trusted reseller profile'}
+                </p>
+              </div>
+            )}
           </div>
 
           {me?.user && !isOwner && (

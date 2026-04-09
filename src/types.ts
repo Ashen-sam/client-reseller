@@ -68,6 +68,23 @@ export interface ListingsResponse {
   pages: number;
 }
 
+export interface SellerSummaryResponse {
+  seller: {
+    id: string;
+    name: string;
+    memberSince?: string;
+  };
+  stats: {
+    rating: number;
+    reviewCount: number;
+    listingCount: number;
+    activeCount: number;
+    soldOrCompletedCount: number;
+    totalViews: number;
+    totalContactClicks: number;
+  };
+}
+
 export interface ListingsQueryArgs {
   type?: 'product' | 'service';
   category?: string;
