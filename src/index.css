@@ -1377,6 +1377,13 @@ img {
   font-variant-numeric: tabular-nums;
 }
 
+.product-card__posted {
+  margin: -0.05rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
 .product-card__meta {
   margin: 0;
   margin-top: auto;
