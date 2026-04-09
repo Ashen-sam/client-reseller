@@ -6,7 +6,6 @@ import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import { getAuthToken, setAuthToken } from '../lib/authToken';
 import PageLoader from '../components/PageLoader';
-import { SYSTEM_ADMIN_LOGIN } from '../constants/adminLogin';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -79,27 +78,6 @@ export default function LoginPage() {
             </div>
           )}
           {error && <div className="error-banner">{msg}</div>}
-
-          {/* <div className="admin-login-hint" role="region" aria-label="System administrator demo login">
-            <p className="admin-login-hint__title">System administrator (single account)</p>
-            <p className="admin-login-hint__meta">
-              Email <code>{SYSTEM_ADMIN_LOGIN.email}</code> · Password <code>{SYSTEM_ADMIN_LOGIN.password}</code>
-            </p>
-            <button
-              type="button"
-              className="btn btn-ghost btn-block"
-              style={{ marginTop: '0.5rem' }}
-              onClick={() => {
-                setEmail(SYSTEM_ADMIN_LOGIN.email);
-                setPassword(SYSTEM_ADMIN_LOGIN.password);
-              }}
-            >
-              Fill admin credentials
-            </button>
-            <p className="admin-login-hint__warn">
-              Change this password in production after first login (Profile → security).
-            </p>
-          </div> */}
 
           <div className="field">
             <label htmlFor="email">Email</label>
