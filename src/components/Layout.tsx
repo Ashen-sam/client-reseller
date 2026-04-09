@@ -5,6 +5,16 @@ import { useAppSelector } from '../store/hooks';
 import { getAuthToken } from '../lib/authToken';
 import { useLogoutMutation, useSessionMeQuery } from '../store/api';
 
+function initialsFromName(name: string | undefined | null): string {
+  const raw = String(name ?? '').trim();
+  if (!raw) return 'U';
+  const parts = raw.split(/\s+/).filter(Boolean);
+  const first = parts[0]?.[0] ?? '';
+  const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : (parts[0]?.[1] ?? '');
+  const out = (first + last).toUpperCase();
+  return out || 'U';
+}
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const reduxUser = useAppSelector((s) => s.auth.user);
   const { data: me } = useSessionMeQuery();
@@ -115,10 +125,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </>
             )}
             {user ? (
-              <span className="site-nav__account">
-                <span className="site-nav__user" title={user.name}>
-                  {user.name}
+              <span className="site-nav__account" title={user.name}>
+                <span className="site-nav__avatar" aria-hidden>
+                  {initialsFromName(user.name)}
                 </span>
+                <span className="site-nav__user">{user.name}</span>
                 <button
                   type="button"
                   className="btn btn-ghost"
@@ -165,7 +176,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </NavLink>
           {user ? (
             <>
-              <div className="site-nav-drawer__user">{user.name}</div>
+              <div className="site-nav-drawer__user">
+                <span className="site-nav-drawer__avatar" aria-hidden>
+                  {initialsFromName(user.name)}
+                </span>
+                <span className="site-nav-drawer__user-name">{user.name}</span>
+              </div>
               <div className="site-nav-drawer__divider" />
               <NavLink to="/sell" className={linkClass} onClick={() => setMenuOpen(false)}>
                 <span className="ui-icon-label"><ShoppingBag size={16} />Sell</span>
