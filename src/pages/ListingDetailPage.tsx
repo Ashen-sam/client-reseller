@@ -25,6 +25,16 @@ export default function ListingDetailPage() {
 
   const listing = data?.listing;
   const isOwner = Boolean(me?.user && listing?.seller?.id === me.user.id);
+  const listingType = listing?.type || 'product';
+  const listingStatus = listing?.status || 'inStock';
+
+  useSeo({
+    title: listing ? `${listing.title}` : 'Listing',
+    description: listing
+      ? `${listing.description.slice(0, 150)}${listing.description.length > 150 ? '…' : ''}`
+      : 'View listing details and contact the seller on Reseller.',
+    path: `/listings/${id}`,
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -37,6 +47,36 @@ export default function ListingDetailPage() {
   useEffect(() => {
     setImgIdx(0);
   }, [listing?.id]);
+
+  useEffect(() => {
+    if (!listing) return;
+    const offersAvailability =
+      listingStatus === 'sold'
+        ? 'https://schema.org/SoldOut'
+        : listingStatus === 'outOfStock'
+          ? 'https://schema.org/OutOfStock'
+          : 'https://schema.org/InStock';
+    setJsonLd('listing-jsonld', {
+      '@context': 'https://schema.org',
+      '@type': listingType === 'service' ? 'Service' : 'Product',
+      name: listing.title,
+      description: listing.description,
+      image: listing.images?.length ? listing.images : undefined,
+      category: listing.category,
+      offers: {
+        '@type': 'Offer',
+        price: Number(listing.price),
+        priceCurrency: listing.currency || 'USD',
+        availability: offersAvailability,
+        url: `${seoSiteUrl()}/listings/${listing.id}`,
+      },
+      seller: {
+        '@type': 'Person',
+        name: listing.seller?.name || 'Seller',
+      },
+    });
+    return () => setJsonLd('listing-jsonld', null);
+  }, [listing, listingStatus, listingType]);
 
   async function trackContact(fn: () => void) {
     if (id) void recordContact(id);
@@ -89,46 +129,6 @@ export default function ListingDetailPage() {
   const sellerName = listing.seller?.name ?? 'Seller';
   const sellerId = listing.seller?.id ?? sellerName;
   const sellerPhone = contact.phone?.trim() || '';
-  const listingType = listing.type || 'product';
-  const listingStatus = listing.status || 'inStock';
-  useSeo({
-    title: listing ? `${listing.title}` : 'Listing',
-    description: listing
-      ? `${listing.description.slice(0, 150)}${listing.description.length > 150 ? '…' : ''}`
-      : 'View listing details and contact the seller on Reseller.',
-    path: `/listings/${id}`,
-  });
-
-  useEffect(() => {
-    if (!listing) return;
-    const offersAvailability =
-      listingStatus === 'sold'
-        ? 'https://schema.org/SoldOut'
-        : listingStatus === 'outOfStock'
-          ? 'https://schema.org/OutOfStock'
-          : 'https://schema.org/InStock';
-    setJsonLd('listing-jsonld', {
-      '@context': 'https://schema.org',
-      '@type': listingType === 'service' ? 'Service' : 'Product',
-      name: listing.title,
-      description: listing.description,
-      image: listing.images?.length ? listing.images : undefined,
-      category: listing.category,
-      offers: {
-        '@type': 'Offer',
-        price: Number(listing.price),
-        priceCurrency: listing.currency || 'USD',
-        availability: offersAvailability,
-        url: `${seoSiteUrl()}/listings/${listing.id}`,
-      },
-      seller: {
-        '@type': 'Person',
-        name: listing.seller?.name || 'Seller',
-      },
-    });
-    return () => setJsonLd('listing-jsonld', null);
-  }, [listing, listingStatus, listingType]);
-
   return (
     <div className="container">
       <section className="page-surface page-surface--compact">
