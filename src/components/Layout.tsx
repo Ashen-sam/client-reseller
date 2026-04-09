@@ -1,13 +1,10 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { api, useLogoutMutation, useSessionMeQuery } from '../store/api';
-import { clearAuth } from '../store/authSlice';
-import { clearAuthToken } from '../lib/authToken';
+import { useAppSelector } from '../store/hooks';
+import { useLogoutMutation, useSessionMeQuery } from '../store/api';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const dispatch = useAppDispatch();
   const reduxUser = useAppSelector((s) => s.auth.user);
   const { data: me } = useSessionMeQuery();
   const user = me?.user ?? reduxUser;
@@ -33,10 +30,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setMenuOpen(false);
     try {
       await logout().unwrap();
-    } finally {
-      clearAuthToken();
-      dispatch(api.util.resetApiState());
-      dispatch(clearAuth());
+    } catch {
+      /* Session cleared in mutation onQueryStarted; unwrap fails only if the request errors */
     }
   }
 

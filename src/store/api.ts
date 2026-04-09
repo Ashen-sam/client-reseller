@@ -10,6 +10,7 @@ import type {
   User,
 } from "../types";
 import { clearAuthToken, getAuthToken, setAuthToken } from "../lib/authToken";
+import { clearAuth } from "./authSlice";
 
 /**
  * Dev: `/` + Vite proxy → local API.
@@ -195,7 +196,21 @@ export const api = createApi({
         url: "api/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["Auth", "Mine", "Stats", "Billing", "Admin"],
+      /**
+       * Clear local session *before* the request finishes so tag invalidation cannot refetch
+       * `/me` with a stale `Authorization` bearer (that was causing “still logged in” until refresh).
+       */
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        clearAuthToken();
+        dispatch(clearAuth());
+        try {
+          await queryFulfilled;
+        } catch {
+          /* Network error: already logged out locally; cookie may remain until a successful POST */
+        } finally {
+          dispatch(api.util.resetApiState());
+        }
+      },
     }),
 
     getAdminStats: builder.query<AdminStats, void>({
