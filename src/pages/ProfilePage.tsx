@@ -27,7 +27,7 @@ export default function ProfilePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>('adventurer');
+  const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>('personas');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showCurrent, setShowCurrent] = useState(false);
@@ -46,7 +46,8 @@ export default function ProfilePage() {
     setName(me.user.name || '');
     setEmail(me.user.email || '');
     setPhone(me.user.phone || '');
-    setAvatarStyle((me.user.avatarStyle as AvatarStyle) || 'adventurer');
+    const nextStyle = (me.user.avatarStyle as AvatarStyle) || 'personas';
+    setAvatarStyle(AVATAR_STYLES.includes(nextStyle) ? nextStyle : 'personas');
   }, [me?.user]);
 
   async function onProfileSubmit(e: React.FormEvent) {

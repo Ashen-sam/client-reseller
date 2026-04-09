@@ -20,7 +20,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
-  avatarStyle?: 'adventurer' | 'avataaars' | 'bottts' | 'identicon' | 'lorelei';
+  avatarStyle?: 'personas' | 'initials' | 'micah' | 'identicon' | 'shapes';
   role: UserRole;
   listingImagePackPurchased: boolean;
   featuredTokens: number;
@@ -37,7 +37,7 @@ export interface SellerRef {
   id: string;
   name?: string;
   email?: string;
-  avatarStyle?: 'adventurer' | 'avataaars' | 'bottts' | 'identicon' | 'lorelei';
+  avatarStyle?: 'personas' | 'initials' | 'micah' | 'identicon' | 'shapes';
 }
 
 export interface Listing {

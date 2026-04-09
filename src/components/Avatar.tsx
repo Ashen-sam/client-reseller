@@ -24,7 +24,7 @@ type Props = {
   className?: string;
 };
 
-export default function Avatar({ name, seed, avatarStyle = 'adventurer', size = 'md', muted, className = '' }: Props) {
+export default function Avatar({ name, seed, avatarStyle = 'personas', size = 'md', muted, className = '' }: Props) {
   const text = initialsFromName(name || '?');
   const s = seed ?? name ?? '?';
   const sizeClass = size === 'sm' ? 'avatar--sm' : size === 'lg' ? 'avatar--lg' : 'avatar--md';

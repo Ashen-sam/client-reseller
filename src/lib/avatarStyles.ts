@@ -1,18 +1,18 @@
 export const AVATAR_STYLES = [
-  'adventurer',
-  'avataaars',
-  'bottts',
+  'personas',
+  'initials',
+  'micah',
   'identicon',
-  'lorelei',
+  'shapes',
 ] as const;
 
 export type AvatarStyle = (typeof AVATAR_STYLES)[number];
 
 export const AVATAR_STYLE_LABELS: Record<AvatarStyle, string> = {
-  adventurer: 'Adventurer',
-  avataaars: 'Avataaars',
-  bottts: 'Bots',
+  personas: 'Seller',
+  initials: 'Classic',
+  micah: 'Professional',
   identicon: 'Identicon',
-  lorelei: 'Lorelei',
+  shapes: 'Minimal',
 };
 
