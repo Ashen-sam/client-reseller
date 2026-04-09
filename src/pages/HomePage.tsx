@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
+import { getAuthToken } from '../lib/authToken';
 import { useGetCategoriesQuery, useGetListingsQuery, useSessionMeQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
@@ -172,7 +173,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <PostListingBanner loggedIn={Boolean(me?.user)} />
+      <PostListingBanner loggedIn={Boolean(getAuthToken() && me?.user)} />
 
       {error && (
         <div className="error-banner" style={{ marginBottom: '1rem' }}>

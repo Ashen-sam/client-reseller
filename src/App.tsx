@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSessionMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
-import { clearAuthToken } from './lib/authToken';
+import { clearAuthToken, getAuthToken } from './lib/authToken';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ListingDetailPage from './pages/ListingDetailPage';
@@ -21,12 +21,20 @@ export default function App() {
   const { data, error, isSuccess } = useSessionMeQuery();
 
   useEffect(() => {
+    if (!getAuthToken()) {
+      dispatch(clearAuth());
+      return;
+    }
     if (isSuccess && data?.user && data.limits) {
       dispatch(setSession({ user: data.user, limits: data.limits }));
     }
   }, [dispatch, data, isSuccess]);
 
   useEffect(() => {
+    if (!getAuthToken()) {
+      dispatch(clearAuth());
+      return;
+    }
     if (isSuccess && (!data || !data.user)) {
       dispatch(clearAuth());
     }

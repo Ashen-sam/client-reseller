@@ -4,7 +4,7 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag } from 'l
 import { useLoginMutation, useSessionMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
-import { setAuthToken } from '../lib/authToken';
+import { getAuthToken, setAuthToken } from '../lib/authToken';
 import PageLoader from '../components/PageLoader';
 import { SYSTEM_ADMIN_LOGIN } from '../constants/adminLogin';
 
@@ -19,9 +19,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading: submitting, error }] = useLoginMutation();
 
-  if (isLoading) return <PageLoader message="Preparing login..." />;
+  if (getAuthToken() && isLoading) return <PageLoader message="Preparing login..." />;
 
-  if (me?.user) {
+  if (getAuthToken() && me?.user) {
     const to =
       me.user.role === 'admin' && (!from || from === '/' || from === '/login') ? '/admin' : from;
     return <Navigate to={to} replace />;

@@ -2,12 +2,14 @@ import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
 import { useAppSelector } from '../store/hooks';
+import { getAuthToken } from '../lib/authToken';
 import { useLogoutMutation, useSessionMeQuery } from '../store/api';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const reduxUser = useAppSelector((s) => s.auth.user);
   const { data: me } = useSessionMeQuery();
-  const user = me?.user ?? reduxUser;
+  /** Without token, ignore stale RTK `me` cache (skip=true still left old data in some cases). */
+  const user = getAuthToken() ? (me?.user ?? reduxUser) : null;
   const [logout, { isLoading: loggingOut }] = useLogoutMutation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
@@ -33,6 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     } catch {
       /* Session cleared in mutation onQueryStarted; unwrap fails only if the request errors */
     }
+    window.location.reload();
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag, UserRound } from 'lucide-react';
+import { getAuthToken } from '../lib/authToken';
 import { useRegisterMutation, useSessionMeQuery } from '../store/api';
 import PageLoader from '../components/PageLoader';
 
@@ -13,9 +14,9 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [register, { isLoading: submitting, error }] = useRegisterMutation();
 
-  if (isLoading) return <PageLoader message="Preparing registration..." />;
+  if (getAuthToken() && isLoading) return <PageLoader message="Preparing registration..." />;
 
-  if (me?.user) {
+  if (getAuthToken() && me?.user) {
     return <Navigate to="/" replace />;
   }
 
