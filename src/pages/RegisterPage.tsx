@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag, UserRound } from 'lucide-react';
-import { useRegisterMutation, useGetMeQuery } from '../store/api';
+import { useRegisterMutation, useSessionMeQuery } from '../store/api';
 import PageLoader from '../components/PageLoader';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { data: me, isLoading, isFetching } = useGetMeQuery();
+  const { data: me, isLoading } = useSessionMeQuery();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [register, { isLoading: submitting, error }] = useRegisterMutation();
 
-  if (isLoading || isFetching) return <PageLoader message="Preparing registration..." />;
+  if (isLoading) return <PageLoader message="Preparing registration..." />;
 
   if (me?.user) {
     return <Navigate to="/" replace />;

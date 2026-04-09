@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag } from 'lucide-react';
-import { useLoginMutation, useGetMeQuery } from '../store/api';
+import { useLoginMutation, useSessionMeQuery } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import { setAuthToken } from '../lib/authToken';
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string; registered?: boolean } | null)?.from ?? '/';
-  const { data: me, isLoading } = useGetMeQuery();
+  const { data: me, isLoading } = useSessionMeQuery();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

@@ -6,7 +6,7 @@ import {
   useGetListingQuery,
   useCreateListingMutation,
   useUpdateListingMutation,
-  useGetMeQuery,
+  useSessionMeQuery,
 } from '../store/api';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import Avatar from '../components/Avatar';
@@ -28,7 +28,7 @@ function errMessage(e: unknown): string {
 export default function ListingFormPage({ mode }: { mode: Mode }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useSessionMeQuery();
   const { data: catData } = useGetCategoriesQuery();
   const { data: curData } = useGetCurrenciesQuery();
   const { data: existing, isLoading: loadingListing } = useGetListingQuery(id ?? '', {

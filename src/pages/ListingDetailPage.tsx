@@ -4,7 +4,7 @@ import {
   useGetListingQuery,
   useRecordViewMutation,
   useRecordContactClickMutation,
-  useGetMeQuery,
+  useSessionMeQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
 import Avatar from '../components/Avatar';
@@ -17,7 +17,7 @@ function categoryLabel(c: string) {
 export default function ListingDetailPage() {
   const { id = '' } = useParams();
   const { data, isLoading, error } = useGetListingQuery(id, { skip: !id });
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useSessionMeQuery();
   const [recordView] = useRecordViewMutation();
   const [recordContact] = useRecordContactClickMutation();
   const [imgIdx, setImgIdx] = useState(0);

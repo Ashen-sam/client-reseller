@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
-import { useGetCategoriesQuery, useGetListingsQuery, useGetMeQuery } from '../store/api';
+import { useGetCategoriesQuery, useGetListingsQuery, useSessionMeQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
 
@@ -31,7 +31,7 @@ export default function HomePage() {
 
   const { data, isLoading, isFetching, error } = useGetListingsQuery(queryArgs);
   const { data: catData } = useGetCategoriesQuery();
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useSessionMeQuery();
   const topicCategories = (catData?.categories ?? []).slice(0, 8);
 
   return (

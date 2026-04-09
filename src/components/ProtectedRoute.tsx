@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useGetMeQuery } from '../store/api';
+import { useSessionMeQuery } from '../store/api';
+import PageLoader from './PageLoader';
 
 export default function ProtectedRoute({
   children,
@@ -9,16 +10,10 @@ export default function ProtectedRoute({
   admin?: boolean;
 }) {
   const location = useLocation();
-  const { data, isLoading, isFetching } = useGetMeQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isLoading } = useSessionMeQuery();
 
-  if (isLoading || isFetching) {
-    return (
-      <div className="container" style={{ padding: '3rem', textAlign: 'center' }}>
-        <p className="text-muted">Loading…</p>
-      </div>
-    );
+  if (isLoading) {
+    return <PageLoader message="Checking your account..." />;
   }
 
   if (!data?.user) {

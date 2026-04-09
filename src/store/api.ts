@@ -523,3 +523,15 @@ export const {
   useDeleteListingMutation,
   usePurchaseProductMutation,
 } = api;
+
+/**
+ * Session restore: skips `/api/auth/me` when there is no stored token so the app
+ * paints immediately on refresh (no waiting on a slow/cold API for guests).
+ */
+export function useSessionMeQuery(options?: { refetchOnMountOrArgChange?: boolean }) {
+  const skip = !getAuthToken();
+  return useGetMeQuery(undefined, {
+    skip,
+    refetchOnMountOrArgChange: options?.refetchOnMountOrArgChange ?? false,
+  });
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, KeyRound, Mail, Phone, Save, Settings, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useChangePasswordMutation, useGetMeQuery, useUpdateProfileMutation } from '../store/api';
+import { useChangePasswordMutation, useSessionMeQuery, useUpdateProfileMutation } from '../store/api';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import Avatar from '../components/Avatar';
@@ -18,7 +18,7 @@ function apiMessage(error: unknown, fallback: string): string {
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useSessionMeQuery();
   const [updateProfile, { isLoading: savingProfile, error: profileError }] = useUpdateProfileMutation();
   const [changePassword, { isLoading: savingPassword, error: passwordError }] = useChangePasswordMutation();
 

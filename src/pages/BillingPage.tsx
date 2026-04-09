@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { BadgeCheck, CreditCard, ShoppingCart } from 'lucide-react';
-import { useGetMeQuery, usePurchaseProductMutation } from '../store/api';
+import { useSessionMeQuery, usePurchaseProductMutation } from '../store/api';
 
 export default function BillingPage() {
-  const { data: me, refetch } = useGetMeQuery();
+  const { data: me, refetch } = useSessionMeQuery();
   const [purchase, { isLoading }] = usePurchaseProductMutation();
 
   const limits = me?.limits;

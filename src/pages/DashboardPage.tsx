@@ -4,7 +4,7 @@ import {
   useGetMineQuery,
   useGetDashboardStatsQuery,
   useDeleteListingMutation,
-  useGetMeQuery,
+  useSessionMeQuery,
 } from '../store/api';
 import { formatPrice } from '../lib/formatPrice';
 import Avatar from '../components/Avatar';
@@ -12,7 +12,7 @@ import Avatar from '../components/Avatar';
 export default function DashboardPage() {
   const { data: mine, isLoading } = useGetMineQuery();
   const { data: stats } = useGetDashboardStatsQuery();
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useSessionMeQuery();
   const [deleteListing, { isLoading: deleting }] = useDeleteListingMutation();
 
   const limits = me?.limits;

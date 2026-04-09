@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useGetMeQuery } from './store/api';
+import { useSessionMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
 import { clearAuthToken } from './lib/authToken';
@@ -15,13 +15,10 @@ import AdminPage from './pages/AdminPage';
 import BillingPage from './pages/BillingPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
-import PageLoader from './components/PageLoader';
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { data, error, isSuccess } = useGetMeQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, error, isSuccess } = useSessionMeQuery();
 
   useEffect(() => {
     if (isSuccess && data?.user && data.limits) {
@@ -30,15 +27,17 @@ export default function App() {
   }, [dispatch, data, isSuccess]);
 
   useEffect(() => {
+    if (isSuccess && (!data || !data.user)) {
+      dispatch(clearAuth());
+    }
+  }, [dispatch, isSuccess, data]);
+
+  useEffect(() => {
     if (error && 'status' in error && error.status === 401) {
       clearAuthToken();
       dispatch(clearAuth());
     }
   }, [dispatch, error]);
-
-  if (!data && !error && !isSuccess) {
-    return <PageLoader message="Refreshing your session..." />;
-  }
 
   return (
     <Layout>

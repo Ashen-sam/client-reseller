@@ -2,14 +2,14 @@ import { useEffect, useId, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { api, useLogoutMutation, useGetMeQuery } from '../store/api';
+import { api, useLogoutMutation, useSessionMeQuery } from '../store/api';
 import { clearAuth } from '../store/authSlice';
 import { clearAuthToken } from '../lib/authToken';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const reduxUser = useAppSelector((s) => s.auth.user);
-  const { data: me } = useGetMeQuery(undefined, { refetchOnMountOrArgChange: true });
+  const { data: me } = useSessionMeQuery();
   const user = me?.user ?? reduxUser;
   const [logout, { isLoading: loggingOut }] = useLogoutMutation();
   const [menuOpen, setMenuOpen] = useState(false);
