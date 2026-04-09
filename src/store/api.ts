@@ -1,6 +1,8 @@
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
+  AdminStats,
+  AdminUsersResponse,
   Listing,
   ListingsQueryArgs,
   ListingsResponse,
@@ -124,6 +126,7 @@ export const api = createApi({
     "Auth",
     "Categories",
     "Billing",
+    "Admin",
   ],
   endpoints: (builder) => ({
     getCategories: builder.query<{ categories: string[] }, void>({
@@ -171,7 +174,7 @@ export const api = createApi({
           /* invalid login */
         }
       },
-      invalidatesTags: ["Auth", "Mine", "Stats"],
+      invalidatesTags: ["Auth", "Mine", "Stats", "Admin"],
     }),
 
     register: builder.mutation<
@@ -184,7 +187,7 @@ export const api = createApi({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }),
-      invalidatesTags: ["Auth", "Mine", "Stats"],
+      invalidatesTags: ["Auth", "Mine", "Stats", "Admin"],
     }),
 
     logout: builder.mutation<{ ok: boolean }, void>({
@@ -192,7 +195,77 @@ export const api = createApi({
         url: "api/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["Auth", "Mine", "Stats", "Billing"],
+      invalidatesTags: ["Auth", "Mine", "Stats", "Billing", "Admin"],
+    }),
+
+    getAdminStats: builder.query<AdminStats, void>({
+      query: () => "api/admin/stats",
+      providesTags: ["Admin"],
+    }),
+
+    getAdminUsers: builder.query<AdminUsersResponse, { page?: number; limit?: number } | void>({
+      query: (args) => {
+        const page = args?.page ?? 1;
+        const limit = args?.limit ?? 50;
+        return `api/admin/users?page=${page}&limit=${limit}`;
+      },
+      providesTags: ["Admin"],
+    }),
+
+    createAdminUser: builder.mutation<
+      { user: User },
+      { name: string; email: string; password: string }
+    >({
+      query: (body) => ({
+        url: "api/admin/users",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+
+    getAdminListings: builder.query<
+      ListingsResponse,
+      { page?: number; limit?: number; sort?: "latest" | "popular" } | void
+    >({
+      query: (args) => {
+        const page = args?.page ?? 1;
+        const limit = args?.limit ?? 24;
+        const sort = args?.sort ?? "latest";
+        return `api/admin/listings?page=${page}&limit=${limit}&sort=${sort}`;
+      },
+      transformResponse: (res: ListingsResponse) => ({
+        ...res,
+        listings: res.listings.map((l) => ({
+          ...l,
+          id: String(l.id),
+          currency: l.currency || "USD",
+          type: l.type || "product",
+          featured: Boolean(l.featured),
+          images: (l.images || []).map(listingImageSrc),
+        })),
+      }),
+      providesTags: ["Admin", { type: "Listings", id: "LIST" }],
+    }),
+
+    createAdminListing: builder.mutation<{ listing: Listing }, FormData>({
+      query: (body) => ({
+        url: "api/admin/listings",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: { listing: Listing }) => ({
+        listing: {
+          ...res.listing,
+          id: String(res.listing.id),
+          currency: res.listing.currency || "USD",
+          type: res.listing.type || "product",
+          featured: Boolean(res.listing.featured),
+          images: (res.listing.images || []).map(listingImageSrc),
+        },
+      }),
+      invalidatesTags: ["Admin", "Listings", "Mine", "Stats"],
     }),
 
     updateProfile: builder.mutation<
@@ -494,7 +567,7 @@ export const api = createApi({
 
         try {
           await queryFulfilled;
-          dispatch(api.util.invalidateTags([{ type: "Listing", id }, "Stats"]));
+          dispatch(api.util.invalidateTags([{ type: "Listing", id }, "Stats", "Admin"]));
         } catch {
           [...patches].reverse().forEach((p) => p.undo());
         }
@@ -522,6 +595,11 @@ export const {
   useUpdateListingMutation,
   useDeleteListingMutation,
   usePurchaseProductMutation,
+  useGetAdminStatsQuery,
+  useGetAdminUsersQuery,
+  useCreateAdminUserMutation,
+  useGetAdminListingsQuery,
+  useCreateAdminListingMutation,
 } = api;
 
 /**

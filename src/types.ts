@@ -76,3 +76,22 @@ export interface ListingsQueryArgs {
   page?: number;
   limit?: number;
 }
+
+export interface AdminStats {
+  userCount: number;
+  listingCount: number;
+  serviceCount: number;
+  productCount: number;
+  totalViews: number;
+}
+
+export interface AdminUserRow extends User {
+  createdAt?: string;
+}
+
+export interface AdminUsersResponse {
+  users: AdminUserRow[];
+  total: number;
+  page: number;
+  pages: number;
+}
