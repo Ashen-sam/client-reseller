@@ -716,6 +716,40 @@ img {
   color: var(--color-text);
 }
 
+.profile-security-note {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.8rem;
+}
+
+.profile-security-note__title {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.profile-security-note__list {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.profile-security-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 900px) {
+  .profile-security-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .avatar--sm {
   width: 36px;
   height: 36px;

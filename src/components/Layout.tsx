@@ -4,16 +4,7 @@ import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingB
 import { useAppSelector } from '../store/hooks';
 import { getAuthToken } from '../lib/authToken';
 import { useLogoutMutation, useSessionMeQuery } from '../store/api';
-
-function initialsFromName(name: string | undefined | null): string {
-  const raw = String(name ?? '').trim();
-  if (!raw) return 'U';
-  const parts = raw.split(/\s+/).filter(Boolean);
-  const first = parts[0]?.[0] ?? '';
-  const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : (parts[0]?.[1] ?? '');
-  const out = (first + last).toUpperCase();
-  return out || 'U';
-}
+import Avatar from './Avatar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const reduxUser = useAppSelector((s) => s.auth.user);
@@ -126,9 +117,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )}
             {user ? (
               <span className="site-nav__account" title={user.name}>
-                <span className="site-nav__avatar" aria-hidden>
-                  {initialsFromName(user.name)}
-                </span>
+                <Avatar
+                  name={user.name}
+                  seed={user.id}
+                  avatarStyle={user.avatarStyle}
+                  size="sm"
+                  className="site-nav__avatar"
+                />
                 <span className="site-nav__user">{user.name}</span>
                 <button
                   type="button"
@@ -177,9 +172,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {user ? (
             <>
               <div className="site-nav-drawer__user">
-                <span className="site-nav-drawer__avatar" aria-hidden>
-                  {initialsFromName(user.name)}
-                </span>
+                <Avatar
+                  name={user.name}
+                  seed={user.id}
+                  avatarStyle={user.avatarStyle}
+                  size="sm"
+                  className="site-nav-drawer__avatar"
+                />
                 <span className="site-nav-drawer__user-name">{user.name}</span>
               </div>
               <div className="site-nav-drawer__divider" />

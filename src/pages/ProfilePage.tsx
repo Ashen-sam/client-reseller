@@ -167,52 +167,62 @@ export default function ProfilePage() {
           <div className="auth-card__header">
             <p className="auth-card__eyebrow">Security</p>
             <h2 className="auth-card__title">Change password</h2>
-            <p className="auth-card__subtitle">Use a strong password with at least 6 characters.</p>
+            <p className="auth-card__subtitle">Keep your account secure with a fresh password.</p>
+          </div>
+          <div className="profile-security-note">
+            <p className="profile-security-note__title">Password requirements</p>
+            <ul className="profile-security-note__list">
+              <li>At least 6 characters</li>
+              <li>Use letters and numbers</li>
+              <li>Avoid reusing old passwords</li>
+            </ul>
           </div>
           {passwordOk && <div className="success-banner">{passwordOk}</div>}
           {passwordError && <div className="error-banner">{apiMessage(passwordError, 'Could not change password')}</div>}
 
-          <div className="field">
-            <label htmlFor="current-password">Current password</label>
-            <div className="field-with-icon">
-              <KeyRound className="field-with-icon__icon" size={16} />
-              <input
-                id="current-password"
-                type={showCurrent ? 'text' : 'password'}
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="field-with-icon__toggle"
-                onClick={() => setShowCurrent((v) => !v)}
-                aria-label={showCurrent ? 'Hide current password' : 'Show current password'}
-              >
-                {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+          <div className="profile-security-grid">
+            <div className="field">
+              <label htmlFor="current-password">Current password</label>
+              <div className="field-with-icon">
+                <KeyRound className="field-with-icon__icon" size={16} />
+                <input
+                  id="current-password"
+                  type={showCurrent ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="field-with-icon__toggle"
+                  onClick={() => setShowCurrent((v) => !v)}
+                  aria-label={showCurrent ? 'Hide current password' : 'Show current password'}
+                >
+                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="field">
-            <label htmlFor="new-password">New password</label>
-            <div className="field-with-icon">
-              <KeyRound className="field-with-icon__icon" size={16} />
-              <input
-                id="new-password"
-                type={showNew ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                minLength={6}
-                required
-              />
-              <button
-                type="button"
-                className="field-with-icon__toggle"
-                onClick={() => setShowNew((v) => !v)}
-                aria-label={showNew ? 'Hide new password' : 'Show new password'}
-              >
-                {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+            <div className="field">
+              <label htmlFor="new-password">New password</label>
+              <div className="field-with-icon">
+                <KeyRound className="field-with-icon__icon" size={16} />
+                <input
+                  id="new-password"
+                  type={showNew ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  minLength={6}
+                  required
+                />
+                <button
+                  type="button"
+                  className="field-with-icon__toggle"
+                  onClick={() => setShowNew((v) => !v)}
+                  aria-label={showNew ? 'Hide new password' : 'Show new password'}
+                >
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           </div>
           <button type="submit" className="btn btn-primary auth-submit-btn" disabled={savingPassword}>
