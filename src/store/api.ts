@@ -292,7 +292,12 @@ export const api = createApi({
         name: string;
         email: string;
         phone?: string;
-        avatarStyle?: "personas" | "initials" | "micah" | "identicon" | "shapes";
+        avatarStyle?:
+          | "avataaars"
+          | "adventurer"
+          | "adventurer-neutral"
+          | "lorelei"
+          | "lorelei-neutral";
       }
     >({
       query: (body) => ({
