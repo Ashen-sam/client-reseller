@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { CircleUserRound, FileText, ImageIcon, PhoneCall } from 'lucide-react';
 import {
   useGetListingQuery,
   useRecordViewMutation,
@@ -151,6 +152,13 @@ export default function ListingDetailPage() {
 
           {images.length > 0 ? (
             <>
+              <div className="pdp__media-head">
+                <span className="ui-icon-label">
+                  <ImageIcon size={14} />
+                  {images.length} image{images.length !== 1 ? 's' : ''}
+                </span>
+                <span className="text-muted">Click image to view full size</span>
+              </div>
               <div className="pdp__hero-wrap">
                 <a href={mainSrc} target="_blank" rel="noreferrer" className="pdp__hero-link">
                   <img src={mainSrc} alt="" className="pdp__hero-img" />
@@ -180,8 +188,15 @@ export default function ListingDetailPage() {
             </div>
           )}
 
-          <h2 className="pdp__section-title">Description</h2>
-          <p className="pdp__description">{listing.description}</p>
+          <section className="pdp__content-card">
+            <h2 className="pdp__section-title">
+              <span className="ui-icon-label">
+                <FileText size={16} />
+                Description
+              </span>
+            </h2>
+            <p className="pdp__description">{listing.description}</p>
+          </section>
         </div>
 
         <aside className="pdp__aside">
@@ -212,7 +227,10 @@ export default function ListingDetailPage() {
 
           <div className="pdp__aside-block">
             <h2 className="pdp__section-title" style={{ marginTop: 0 }}>
-              Seller
+              <span className="ui-icon-label">
+                <CircleUserRound size={16} />
+                Seller details
+              </span>
             </h2>
             <div className="person-card">
               <Avatar name={sellerName} seed={sellerId} size="lg" />
@@ -244,7 +262,10 @@ export default function ListingDetailPage() {
 
           <div className="pdp__aside-block">
             <h2 className="pdp__section-title" style={{ marginTop: 0 }}>
-              Contact seller
+              <span className="ui-icon-label">
+                <PhoneCall size={16} />
+                Contact seller
+              </span>
             </h2>
             <div className="stack-gap">
               {contact.phone && (

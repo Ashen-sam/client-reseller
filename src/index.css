@@ -1430,6 +1430,16 @@ img {
   margin: 0 auto 0.75rem;
 }
 
+.pdp__media-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.55rem;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
 .pdp__hero-img {
   width: 100%;
   height: 100%;
@@ -1547,6 +1557,14 @@ img {
   word-break: break-word;
 }
 
+.pdp__content-card {
+  margin-top: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fff 0%, #fcfcfd 100%);
+  padding: 0.95rem 1rem;
+}
+
 .pdp__aside {
   border-left: 1px solid var(--color-border);
   padding-left: 1.5rem;
@@ -1559,6 +1577,10 @@ img {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.pdp__aside-block .pdp__section-title .ui-icon-label {
+  gap: 0.45rem;
 }
 
 .pdp__pill-row {
