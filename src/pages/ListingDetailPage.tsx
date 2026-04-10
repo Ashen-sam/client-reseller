@@ -1,6 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CircleUserRound, FileText, ImageIcon, PhoneCall, Star, TrendingUp, Users } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleUserRound,
+  FileText,
+  ImageIcon,
+  PhoneCall,
+  Star,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import {
   useGetListingQuery,
   useGetSellerSummaryQuery,
@@ -130,6 +140,20 @@ export default function ListingDetailPage() {
   const { contact } = listing;
   const images = listing.images ?? [];
   const mainSrc = images[imgIdx] ?? images[0];
+
+  function pdpCarouselPrev(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (images.length < 2) return;
+    setImgIdx((idx) => (idx === 0 ? images.length - 1 : idx - 1));
+  }
+
+  function pdpCarouselNext(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (images.length < 2) return;
+    setImgIdx((idx) => (idx === images.length - 1 ? 0 : idx + 1));
+  }
   const sellerName = listing.seller?.name ?? 'Seller';
   const sellerId = listing.seller?.id ?? sellerName;
   const sellerPhone = contact.phone?.trim() || '';
@@ -171,6 +195,29 @@ export default function ListingDetailPage() {
                 <a href={mainSrc} target="_blank" rel="noreferrer" className="pdp__hero-link">
                   <img src={mainSrc} alt="" className="pdp__hero-img" />
                 </a>
+                {images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="pdp__carousel-btn pdp__carousel-btn--prev"
+                      onClick={pdpCarouselPrev}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={22} strokeWidth={2.25} aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      className="pdp__carousel-btn pdp__carousel-btn--next"
+                      onClick={pdpCarouselNext}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={22} strokeWidth={2.25} aria-hidden />
+                    </button>
+                    <span className="pdp__carousel-counter" aria-live="polite">
+                      {imgIdx + 1} / {images.length}
+                    </span>
+                  </>
+                )}
               </div>
               {images.length > 1 && (
                 <div className="pdp__thumbs">
