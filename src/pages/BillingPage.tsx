@@ -43,7 +43,7 @@ export default function BillingPage() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {products.map((p) => {
-          const imagePackOwned = p.id === 'image_pack_10' && me?.user.listingImagePackPurchased;
+          const imagePackOwned = p.id === 'image_pack_8' && me?.user.listingImagePackPurchased;
           return (
             <div key={p.id} className="card" style={{ padding: '1.25rem 1.5rem' }}>
               <h2 className="section-title" style={{ fontSize: 'var(--text-md)', marginBottom: '0.35rem' }}>

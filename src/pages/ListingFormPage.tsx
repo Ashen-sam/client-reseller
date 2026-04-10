@@ -44,6 +44,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
   const [updateListing, { isLoading: updating }] = useUpdateListingMutation();
 
   const maxImg = me?.limits?.maxImagesPerListing ?? 3;
+  const paidCap = me?.limits?.paidMaxImagesPerListing ?? 8;
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -142,7 +143,7 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
 
     if (mode === 'create') {
       if (files.length > maxImg) {
-        setErr(`You can upload at most ${maxImg} images. Upgrade in Billing for up to 10.`);
+        setErr(`You can upload at most ${maxImg} images. Upgrade in Billing for up to ${paidCap}.`);
         return;
       }
       fd.append('featured', featured && tokens > 0 ? 'true' : 'false');
@@ -324,10 +325,10 @@ export default function ListingFormPage({ mode }: { mode: Mode }) {
         <div className="product-form__panel product-form__panel--sidebar">
           <div className="form-notice" style={{ margin: 0 }}>
             Up to <strong>{maxImg}</strong> images on your plan.
-            {maxImg < 10 && (
+            {maxImg < paidCap && (
               <>
                 {' '}
-                Unlock up to 10 for Rs. {me?.limits?.imagePackPriceLkr ?? 150} in <Link to="/billing">Billing</Link>.
+                Unlock up to {paidCap} for Rs. {me?.limits?.imagePackPriceLkr ?? 150} in <Link to="/billing">Billing</Link>.
               </>
             )}
           </div>

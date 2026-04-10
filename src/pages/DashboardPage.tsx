@@ -137,7 +137,8 @@ export default function DashboardPage() {
             {!me?.user.listingImagePackPurchased && (
               <>
                 {' '}
-                (free: {limits.freeMaxImages}; unlock 10 for Rs. {limits.imagePackPriceLkr})
+                (free: {limits.freeMaxImages}; unlock {limits.paidMaxImagesPerListing ?? 8} for Rs.{' '}
+                {limits.imagePackPriceLkr})
               </>
             )}
             {me?.user.featuredTokens ? (

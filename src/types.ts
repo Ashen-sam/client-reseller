@@ -10,6 +10,8 @@ export interface BillingProduct {
 export interface AccountLimits {
   maxImagesPerListing: number;
   freeMaxImages: number;
+  /** Max images after purchasing the photo pack (or admin cap). */
+  paidMaxImagesPerListing: number;
   imagePackPriceLkr: number;
   featuredTokenPriceLkr: number;
   products: BillingProduct[];
