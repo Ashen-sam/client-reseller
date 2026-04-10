@@ -71,13 +71,13 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <p className="product-card__price">{formatPrice(listing.price, listing.currency || 'USD')}</p>
         <p className="product-card__posted">{postedAgo(listing.createdAt)}</p>
         <p className="product-card__meta">
-          <span className="ui-icon-label"><Eye size={13} />{listing.views} views</span>
+          <span className="ui-icon-label"><Eye size={12} />{listing.views} views</span>
           {' · '}
-          <span className="ui-icon-label"><MousePointerClick size={13} />{listing.contactClicks} contacts</span>
+          <span className="ui-icon-label"><MousePointerClick size={12} />{listing.contactClicks} contacts</span>
           {imgs.length > 1 && !isPending && (
             <span className="product-card__photos-hint">
               {' · '}
-              <span className="ui-icon-label"><Camera size={13} />{imgs.length} photos</span>
+              <span className="ui-icon-label"><Camera size={12} />{imgs.length} photos</span>
             </span>
           )}
         </p>
