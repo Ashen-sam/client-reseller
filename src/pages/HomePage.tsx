@@ -34,6 +34,15 @@ export default function HomePage() {
   const { data, isLoading, isFetching, error } = useGetListingsQuery(queryArgs);
   const { data: catData } = useGetCategoriesQuery();
   const topicCategories = (catData?.categories ?? []).slice(0, 8);
+
+  const hasNarrowFilters = Boolean(
+    category ||
+      type ||
+      minPrice !== '' ||
+      maxPrice !== '' ||
+      sort !== 'latest' ||
+      page > 1
+  );
   useSeo({
     title: 'Marketplace',
     description:
@@ -213,9 +222,22 @@ export default function HomePage() {
             ))}
           </div>
           {!data?.listings?.length && (
-            <p className="text-muted" style={{ textAlign: 'center', padding: '3rem 1rem', fontSize: 'var(--text-md)' }}>
-              No products match your filters.
-            </p>
+            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              {hasNarrowFilters ? (
+                <p className="text-muted" style={{ margin: 0, fontSize: 'var(--text-md)' }}>
+                  No products match your filters.
+                </p>
+              ) : (
+                <>
+                  <p className="text-muted" style={{ margin: 0, fontSize: 'var(--text-md)' }}>
+                    No listings yet.
+                  </p>
+                  <p className="text-muted" style={{ margin: '0.5rem 0 0', fontSize: 'var(--text-sm)' }}>
+                    <Link to="/sell">Create a listing</Link> to get started, or widen your filters if you are searching.
+                  </p>
+                </>
+              )}
+            </div>
           )}
           {!!data && data.pages > 1 && (
             <div className="pagination">
