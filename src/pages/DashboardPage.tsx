@@ -21,8 +21,8 @@ import {
   useGetMineQuery,
   useGetDashboardStatsQuery,
   useDeleteListingMutation,
-  useSessionMeQuery,
 } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 import { formatPrice } from '../lib/formatPrice';
 import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { useSeo } from '../lib/seo';

@@ -6,8 +6,8 @@ import {
   useGetListingQuery,
   useCreateListingMutation,
   useUpdateListingMutation,
-  useSessionMeQuery,
 } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import {
   listingAvailabilityFieldHint,

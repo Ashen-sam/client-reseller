@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSessionMeQuery } from './store/api';
+import { useAuth } from '@clerk/clerk-react';
+import { useSessionMeQuery } from './hooks/useSessionMeQuery';
 import { useAppDispatch } from './store/hooks';
 import { setSession, clearAuth } from './store/authSlice';
-import { clearAuthToken, getAuthToken } from './lib/authToken';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ListingDetailPage from './pages/ListingDetailPage';
@@ -20,42 +20,31 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { data, error, isSuccess } = useSessionMeQuery();
+  const { isLoaded, isSignedIn } = useAuth();
+  const { data, isSuccess } = useSessionMeQuery();
 
   useEffect(() => {
-    if (!getAuthToken()) {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
       dispatch(clearAuth());
       return;
     }
     if (isSuccess && data?.user && data.limits) {
       dispatch(setSession({ user: data.user, limits: data.limits }));
     }
-  }, [dispatch, data, isSuccess]);
+  }, [dispatch, isLoaded, isSignedIn, data, isSuccess]);
 
-  useEffect(() => {
-    if (!getAuthToken()) {
-      dispatch(clearAuth());
-      return;
-    }
-    if (isSuccess && (!data || !data.user)) {
-      dispatch(clearAuth());
-    }
-  }, [dispatch, isSuccess, data]);
-
-  useEffect(() => {
-    if (error && 'status' in error && error.status === 401) {
-      clearAuthToken();
-      dispatch(clearAuth());
-    }
-  }, [dispatch, error]);
+  // Never call Clerk `signOut` from API/React Query outcomes. A 401 or null `/me` (race, Mongo
+  // sync, or server blip) must not revoke the browser session — that caused “logged in for a
+  // second then kicked out” and repeated full redirects.
 
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/listings/:id" element={<ListingDetailPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login/*" element={<LoginPage />} />
+        <Route path="/register/*" element={<RegisterPage />} />
         <Route
           path="/dashboard"
           element={

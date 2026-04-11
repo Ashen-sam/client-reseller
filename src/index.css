@@ -2175,6 +2175,21 @@ img {
   gap: 1rem;
 }
 
+/* Clerk <SignIn /> / <SignUp /> embedded UI */
+.clerk-auth-card {
+  min-height: 26rem;
+  width: 100%;
+  max-width: 26rem;
+  justify-self: center;
+}
+
+@media (min-width: 960px) {
+  .clerk-auth-card {
+    justify-self: stretch;
+    max-width: none;
+  }
+}
+
 .auth-card__header {
   display: grid;
   gap: 0.35rem;

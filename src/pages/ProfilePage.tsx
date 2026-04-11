@@ -3,7 +3,8 @@ import { Eye, EyeOff, KeyRound, Mail, Phone, Save, Settings, UserRound } from 'l
 import { Link } from 'react-router-dom';
 import { AVATAR_STYLES, AVATAR_STYLE_LABELS, type AvatarStyle } from '../lib/avatarStyles';
 import { useSeo } from '../lib/seo';
-import { useChangePasswordMutation, useSessionMeQuery, useUpdateProfileMutation } from '../store/api';
+import { useChangePasswordMutation, useUpdateProfileMutation } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 import { useAppDispatch } from '../store/hooks';
 import { setSession } from '../store/authSlice';
 import Avatar from '../components/Avatar';
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   const { data: me } = useSessionMeQuery();
   const [updateProfile, { isLoading: savingProfile, error: profileError }] = useUpdateProfileMutation();
   const [changePassword, { isLoading: savingPassword, error: passwordError }] = useChangePasswordMutation();
+  const clerkLinked = Boolean(me?.user?.clerkLinked);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -100,7 +102,10 @@ export default function ProfilePage() {
           <div className="auth-card__header">
             <p className="auth-card__eyebrow">Account settings</p>
             <h2 className="auth-card__title">Manage profile</h2>
-            <p className="auth-card__subtitle">Update your name, email, and phone number.</p>
+            <p className="auth-card__subtitle">
+              Update your name and phone number
+              {clerkLinked ? ' (email is managed in your Clerk account).' : ', and email.'}
+            </p>
           </div>
           {profileOk && <div className="success-banner">{profileOk}</div>}
           {profileError && <div className="error-banner">{apiMessage(profileError, 'Could not update profile')}</div>}
@@ -122,6 +127,9 @@ export default function ProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                readOnly={clerkLinked}
+                title={clerkLinked ? 'Change email in your Clerk account' : undefined}
+                style={clerkLinked ? { opacity: 0.85 } : undefined}
               />
             </div>
           </div>
@@ -164,75 +172,88 @@ export default function ProfilePage() {
           </button>
         </form>
 
-        <form className="auth-card auth-card--pro" onSubmit={(e) => void onPasswordSubmit(e)}>
-          <div className="auth-card__header">
-            <p className="auth-card__eyebrow">Security</p>
-            <h2 className="auth-card__title">Change password</h2>
-            <p className="auth-card__subtitle">Keep your account secure with a fresh password.</p>
+        {clerkLinked ? (
+          <div className="auth-card auth-card--pro">
+            <div className="auth-card__header">
+              <p className="auth-card__eyebrow">Security</p>
+              <h2 className="auth-card__title">Password & sign-in</h2>
+              <p className="auth-card__subtitle">
+                Your password and social logins are managed by Clerk. Use the sign-in page or your Clerk user profile
+                to update them.
+              </p>
+            </div>
           </div>
-          <div className="profile-security-note">
-            <p className="profile-security-note__title">Password requirements</p>
-            <ul className="profile-security-note__list">
-              <li>At least 6 characters</li>
-              <li>Use letters and numbers</li>
-              <li>Avoid reusing old passwords</li>
-            </ul>
-          </div>
-          {passwordOk && <div className="success-banner">{passwordOk}</div>}
-          {passwordError && <div className="error-banner">{apiMessage(passwordError, 'Could not change password')}</div>}
+        ) : (
+          <form className="auth-card auth-card--pro" onSubmit={(e) => void onPasswordSubmit(e)}>
+            <div className="auth-card__header">
+              <p className="auth-card__eyebrow">Security</p>
+              <h2 className="auth-card__title">Change password</h2>
+              <p className="auth-card__subtitle">Keep your account secure with a fresh password.</p>
+            </div>
+            <div className="profile-security-note">
+              <p className="profile-security-note__title">Password requirements</p>
+              <ul className="profile-security-note__list">
+                <li>At least 6 characters</li>
+                <li>Use letters and numbers</li>
+                <li>Avoid reusing old passwords</li>
+              </ul>
+            </div>
+            {passwordOk && <div className="success-banner">{passwordOk}</div>}
+            {passwordError && <div className="error-banner">{apiMessage(passwordError, 'Could not change password')}</div>}
 
-          <div className="profile-security-grid">
-            <div className="field">
-              <label htmlFor="current-password">Current password</label>
-              <div className="field-with-icon">
-                <KeyRound className="field-with-icon__icon" size={16} />
-                <input
-                  id="current-password"
-                  type={showCurrent ? 'text' : 'password'}
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="field-with-icon__toggle"
-                  onClick={() => setShowCurrent((v) => !v)}
-                  aria-label={showCurrent ? 'Hide current password' : 'Show current password'}
-                >
-                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
+            <div className="profile-security-grid">
+              <div className="field">
+                <label htmlFor="current-password">Current password</label>
+                <div className="field-with-icon">
+                  <KeyRound className="field-with-icon__icon" size={16} />
+                  <input
+                    id="current-password"
+                    type={showCurrent ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="field-with-icon__toggle"
+                    onClick={() => setShowCurrent((v) => !v)}
+                    aria-label={showCurrent ? 'Hide current password' : 'Show current password'}
+                  >
+                    {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              <div className="field">
+                <label htmlFor="new-password">New password</label>
+                <div className="field-with-icon">
+                  <KeyRound className="field-with-icon__icon" size={16} />
+                  <input
+                    id="new-password"
+                    type={showNew ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    minLength={6}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="field-with-icon__toggle"
+                    onClick={() => setShowNew((v) => !v)}
+                    aria-label={showNew ? 'Hide new password' : 'Show new password'}
+                  >
+                    {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="field">
-              <label htmlFor="new-password">New password</label>
-              <div className="field-with-icon">
-                <KeyRound className="field-with-icon__icon" size={16} />
-                <input
-                  id="new-password"
-                  type={showNew ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  minLength={6}
-                  required
-                />
-                <button
-                  type="button"
-                  className="field-with-icon__toggle"
-                  onClick={() => setShowNew((v) => !v)}
-                  aria-label={showNew ? 'Hide new password' : 'Show new password'}
-                >
-                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary auth-submit-btn" disabled={savingPassword}>
-            <span className="ui-icon-label">
-              <KeyRound size={16} />
-              {savingPassword ? 'Updating...' : 'Update password'}
-            </span>
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary auth-submit-btn" disabled={savingPassword}>
+              <span className="ui-icon-label">
+                <KeyRound size={16} />
+                {savingPassword ? 'Updating...' : 'Update password'}
+              </span>
+            </button>
+          </form>
+        )}
       </section>
     </div>
   );

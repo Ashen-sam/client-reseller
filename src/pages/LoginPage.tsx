@@ -1,23 +1,35 @@
-import { useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, ShoppingBag } from 'lucide-react';
-import { useLoginMutation, useSessionMeQuery } from '../store/api';
-import { useAppDispatch } from '../store/hooks';
-import { setSession } from '../store/authSlice';
-import { getAuthToken, setAuthToken } from '../lib/authToken';
+import { SignIn, useAuth } from '@clerk/clerk-react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { ShieldCheck, ShoppingBag } from 'lucide-react';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 import PageLoader from '../components/PageLoader';
 import { useSeo } from '../lib/seo';
 
+function redirectAfterLogin(
+  role: 'user' | 'admin',
+  from: string,
+): string {
+  const generic = !from || from === '/' || from.startsWith('/login');
+  if (role === 'admin' && generic) return '/admin';
+  if (generic) return '/';
+  return from;
+}
+
+/** Only allow same-origin relative paths (avoid open redirects). */
+function safeReturnPath(raw: string | null): string | null {
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return null;
+  return raw;
+}
+
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string; registered?: boolean } | null)?.from ?? '/';
+  const from =
+    (location.state as { from?: string } | null)?.from ??
+    safeReturnPath(new URLSearchParams(location.search).get('redirect_url')) ??
+    '/';
+  const { isLoaded, isSignedIn } = useAuth();
   const { data: me, isLoading } = useSessionMeQuery();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [login, { isLoading: submitting, error }] = useLoginMutation();
+
   useSeo({
     title: 'Log In',
     description: 'Log in to your Reseller account to manage listings, profile settings, and dashboard insights.',
@@ -25,34 +37,23 @@ export default function LoginPage() {
     noindex: true,
   });
 
-  if (getAuthToken() && isLoading) return <PageLoader message="Preparing login..." />;
+  if (!isLoaded) return <PageLoader message="Loading…" />;
 
-  if (getAuthToken() && me?.user) {
-    const to =
-      me.user.role === 'admin' && (!from || from === '/' || from === '/login') ? '/admin' : from;
+  if (isSignedIn && isLoading) return <PageLoader message="Preparing your session…" />;
+
+  if (isSignedIn && me?.user) {
+    const to = redirectAfterLogin(me.user.role, from);
     return <Navigate to={to} replace />;
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      const res = await login({ email, password }).unwrap();
-      if (res.token) setAuthToken(res.token);
-      dispatch(setSession({ user: res.user, limits: res.limits }));
-      const redirectTo =
-        res.user.role === 'admin' && (!from || from === '/' || from === '/login')
-          ? '/admin'
-          : from;
-      navigate(redirectTo, { replace: true });
-    } catch {
-      /* handled below */
-    }
+  // Clerk session is ready but `/me` is still syncing — leave login so we do not fight Clerk’s UI,
+  // and avoid `fallbackRedirectUrl` (removed) which was forcing extra navigations.
+  if (isSignedIn) {
+    const safeFrom =
+      from && from !== '/login' && !from.startsWith('/login/') ? from : '/';
+    const to = redirectAfterLogin('user', safeFrom);
+    return <Navigate to={to} replace />;
   }
-
-  const msg =
-    error && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
-      ? String((error.data as { message: string }).message)
-      : 'Login failed';
 
   return (
     <div className="container auth-page">
@@ -63,74 +64,19 @@ export default function LoginPage() {
             <span>Reseller</span>
           </div>
           <h1 className="auth-brand__title">Sell smarter with a trusted marketplace.</h1>
-          <p className="auth-brand__subtitle">Manage listings, track views, and reach buyers with a clean dashboard experience.</p>
+          <p className="auth-brand__subtitle">
+            Manage listings, track views, and reach buyers with a clean dashboard experience.
+          </p>
           <div className="auth-brand__point">
             <ShieldCheck size={16} />
-            <span>Secure sign in with JWT and protected routes</span>
+            <span>Secure sign-in with Clerk (Google or email)</span>
           </div>
         </aside>
 
-        <form className="auth-card auth-card--pro" onSubmit={onSubmit}>
-          <div className="auth-card__header">
-            <p className="auth-card__eyebrow">Welcome back</p>
-            <h2 className="auth-card__title">Log in to your account</h2>
-            <p className="auth-card__subtitle">
-              New here? <Link to="/register">Create an account</Link>
-            </p>
-          </div>
-
-          {(location.state as { registered?: boolean } | null)?.registered && (
-            <div className="success-banner" role="status">
-              Account created. Sign in with your email and password.
-            </div>
-          )}
-          {error && <div className="error-banner">{msg}</div>}
-
-          <div className="field">
-            <label htmlFor="email">Email</label>
-            <div className="field-with-icon">
-              <Mail className="field-with-icon__icon" size={16} />
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <div className="field-with-icon">
-              <Lock className="field-with-icon__icon" size={16} />
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                className="field-with-icon__toggle"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" className="btn btn-primary btn-block auth-submit-btn" disabled={submitting}>
-            <span>{submitting ? 'Signing in...' : 'Sign in'}</span>
-            <ArrowRight size={16} />
-          </button>
-        </form>
+        <div className="auth-card auth-card--pro clerk-auth-card">
+          <SignIn routing="path" path="/login" signUpUrl="/register" />
+        </div>
       </section>
-      {submitting && <PageLoader message="Signing you in..." />}
     </div>
   );
 }

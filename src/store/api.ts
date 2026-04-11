@@ -10,7 +10,7 @@ import type {
   SellerSummaryResponse,
   User,
 } from "../types";
-import { clearAuthToken, getAuthToken, setAuthToken } from "../lib/authToken";
+import { getClerkToken } from "../lib/clerkTokenBridge";
 import { clearAuth } from "./authSlice";
 
 /**
@@ -31,8 +31,12 @@ function getApiBaseUrl(): string {
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: getApiBaseUrl(),
   credentials: "include",
-  prepareHeaders: (headers) => {
-    const t = getAuthToken();
+  prepareHeaders: async (headers) => {
+    let t = await getClerkToken();
+    if (!t) {
+      await new Promise((r) => setTimeout(r, 120));
+      t = await getClerkToken();
+    }
     if (t) headers.set("Authorization", `Bearer ${t}`);
     return headers;
   },
@@ -55,7 +59,7 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
       !u.includes("auth/register") &&
       !u.includes("auth/me")
     ) {
-      clearAuthToken();
+      api.dispatch(clearAuth());
     }
   }
   return result;
@@ -151,7 +155,6 @@ export const api = createApi({
       transformResponse: (response: unknown, meta: { response?: Response } | undefined) => {
         const status = meta?.response?.status;
         if (status === 401) {
-          clearAuthToken();
           return null;
         }
         const body = response as { user?: unknown } | null;
@@ -160,38 +163,8 @@ export const api = createApi({
         }
         return null;
       },
-      providesTags: (result) => (result?.user ? ["Auth"] : []),
-    }),
-
-    login: builder.mutation<MeResponse, { email: string; password: string }>({
-      query: (body) => ({
-        url: "api/auth/login",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }),
-      async onQueryStarted(_arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data.token) setAuthToken(data.token);
-        } catch {
-          /* invalid login */
-        }
-      },
-      invalidatesTags: ["Auth", "Mine", "Stats", "Admin"],
-    }),
-
-    register: builder.mutation<
-      MeResponse,
-      { email: string; password: string; name: string }
-    >({
-      query: (body) => ({
-        url: "api/auth/register",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }),
-      invalidatesTags: ["Auth", "Mine", "Stats", "Admin"],
+      // Always tag so `invalidateTags(['Auth'])` refetches `/me` after a failed or stale anonymous response.
+      providesTags: ["Auth"],
     }),
 
     logout: builder.mutation<{ ok: boolean }, void>({
@@ -199,21 +172,6 @@ export const api = createApi({
         url: "api/auth/logout",
         method: "POST",
       }),
-      /**
-       * Clear local session *before* the request finishes so tag invalidation cannot refetch
-       * `/me` with a stale `Authorization` bearer (that was causing “still logged in” until refresh).
-       */
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        clearAuthToken();
-        dispatch(clearAuth());
-        try {
-          await queryFulfilled;
-        } catch {
-          /* Network error: already logged out locally; cookie may remain until a successful POST */
-        } finally {
-          dispatch(api.util.resetApiState());
-        }
-      },
     }),
 
     getAdminStats: builder.query<AdminStats, void>({
@@ -621,8 +579,6 @@ export const {
   useGetCategoriesQuery,
   useGetCurrenciesQuery,
   useGetMeQuery,
-  useLoginMutation,
-  useRegisterMutation,
   useLogoutMutation,
   useUpdateProfileMutation,
   useChangePasswordMutation,
@@ -643,15 +599,3 @@ export const {
   useGetAdminListingsQuery,
   useCreateAdminListingMutation,
 } = api;
-
-/**
- * Session restore: skips `/api/auth/me` when there is no stored token so the app
- * paints immediately on refresh (no waiting on a slow/cold API for guests).
- */
-export function useSessionMeQuery(options?: { refetchOnMountOrArgChange?: boolean }) {
-  const skip = !getAuthToken();
-  return useGetMeQuery(undefined, {
-    skip,
-    refetchOnMountOrArgChange: options?.refetchOnMountOrArgChange ?? false,
-  });
-}

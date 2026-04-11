@@ -16,8 +16,8 @@ import {
   useGetSellerSummaryQuery,
   useRecordViewMutation,
   useRecordContactClickMutation,
-  useSessionMeQuery,
 } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 import { formatPrice } from '../lib/formatPrice';
 import { listingStatusLabel } from '../lib/listingStatusLabels';
 import { seoSiteUrl, setJsonLd, useSeo } from '../lib/seo';

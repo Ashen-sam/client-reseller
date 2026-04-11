@@ -26,6 +26,8 @@ export interface User {
   role: UserRole;
   listingImagePackPurchased: boolean;
   featuredTokens: number;
+  /** True when this row is linked to Clerk (email/password changes go through Clerk). */
+  clerkLinked?: boolean;
 }
 
 export interface MeResponse {

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { BadgeCheck, CreditCard, ShoppingCart } from 'lucide-react';
 import { useSeo } from '../lib/seo';
-import { useSessionMeQuery, usePurchaseProductMutation } from '../store/api';
+import { usePurchaseProductMutation } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
 
 export default function BillingPage() {
   const { data: me, refetch } = useSessionMeQuery();

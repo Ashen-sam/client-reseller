@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import { ArrowLeft, ArrowRight, Filter, Sparkles } from 'lucide-react';
-import { getAuthToken } from '../lib/authToken';
 import { useSeo } from '../lib/seo';
 import { useGetCategoriesQuery, useGetListingsQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
@@ -12,6 +12,7 @@ function catLabel(c: string) {
 }
 
 export default function HomePage() {
+  const { isSignedIn } = useAuth();
   const [type, setType] = useState<'product' | 'service' | ''>('');
   const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
@@ -188,7 +189,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <PostListingBanner loggedIn={Boolean(getAuthToken())} />
+      <PostListingBanner loggedIn={isSignedIn} />
 
       {error && (
         <div className="error-banner" style={{ marginBottom: '1rem' }}>

@@ -1,16 +1,56 @@
 import { useEffect, useId, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth, useClerk, useUser } from '@clerk/clerk-react';
 import { CreditCard, LayoutDashboard, LogIn, LogOut, Settings, Shield, ShoppingBag, Store, UserPlus } from 'lucide-react';
-import { useAppSelector } from '../store/hooks';
-import { getAuthToken } from '../lib/authToken';
-import { useLogoutMutation, useSessionMeQuery } from '../store/api';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { clearAuth } from '../store/authSlice';
+import { useLogoutMutation, api } from '../store/api';
+import { useSessionMeQuery } from '../hooks/useSessionMeQuery';
+import type { User } from '../types';
 import Avatar from './Avatar';
 
+function headerUserFromClerk(cu: {
+  id: string;
+  primaryEmailAddress?: { emailAddress?: string | null } | null;
+  fullName?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  username?: string | null;
+}): User {
+  const email = cu.primaryEmailAddress?.emailAddress ?? '';
+  const name =
+    cu.fullName?.trim() ||
+    [cu.firstName, cu.lastName].filter(Boolean).join(' ').trim() ||
+    cu.username?.trim() ||
+    (email ? email.split('@')[0] : '') ||
+    'You';
+  return {
+    id: cu.id,
+    email,
+    name,
+    role: 'user',
+    listingImagePackPurchased: false,
+    featuredTokens: 0,
+    avatarStyle: 'avataaars',
+    clerkLinked: true,
+  };
+}
+
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { isSignedIn } = useAuth();
+  const { user: clerkUser, isLoaded: clerkUserLoaded } = useUser();
+  const { signOut } = useClerk();
   const reduxUser = useAppSelector((s) => s.auth.user);
   const { data: me } = useSessionMeQuery();
-  /** Without token, ignore stale RTK `me` cache (skip=true still left old data in some cases). */
-  const user = getAuthToken() ? (me?.user ?? reduxUser) : null;
+  const resolvedApiUser = me?.user ?? reduxUser ?? null;
+  const provisionalUser =
+    isSignedIn && clerkUserLoaded && clerkUser && !resolvedApiUser
+      ? headerUserFromClerk(clerkUser)
+      : null;
+  const user = isSignedIn ? (resolvedApiUser ?? provisionalUser) : null;
+  const isAdmin = resolvedApiUser?.role === 'admin';
   const [logout, { isLoading: loggingOut }] = useLogoutMutation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
@@ -32,11 +72,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   async function handleLogout() {
     setMenuOpen(false);
     try {
+      await signOut();
+    } catch {
+      /* continue clearing app state */
+    }
+    dispatch(clearAuth());
+    dispatch(api.util.resetApiState());
+    try {
       await logout().unwrap();
     } catch {
-      /* Session cleared in mutation onQueryStarted; unwrap fails only if the request errors */
+      /* cookie clear is best-effort */
     }
-    window.location.reload();
+    navigate('/', { replace: true });
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -103,7 +150,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   <span className="ui-icon-label"><CreditCard size={16} />Billing</span>
                 </NavLink>
-                {user.role === 'admin' && (
+                {isAdmin && (
                   <NavLink
                     to="/admin"
                     className={({ isActive }) =>
@@ -194,7 +241,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <NavLink to="/profile" className={linkClass} onClick={() => setMenuOpen(false)}>
                 <span className="ui-icon-label"><Settings size={16} />Profile</span>
               </NavLink>
-              {user.role === 'admin' && (
+              {isAdmin && (
                 <NavLink to="/admin" className={linkClass} onClick={() => setMenuOpen(false)}>
                   <span className="ui-icon-label"><Shield size={16} />Admin</span>
                 </NavLink>
