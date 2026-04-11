@@ -1,6 +1,3 @@
 User-agent: *
 Allow: /
-
-# Update this to your final production domain if needed.
-Sitemap: https://reseller.example.com/sitemap.xml
-
+Sitemap: https://client-reseller.vercel.app/sitemap.xml
