@@ -55,7 +55,7 @@ export default function BillingPage() {
               </p>
               <p style={{ margin: '0 0 1rem', fontWeight: 600, fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>
                 Rs. {p.priceLkr.toLocaleString()}{' '}
-                <span style={{ fontWeight: 400, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>LKR</span>
+                <span style={{ fontWeight: 400, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>LKR(this is free of charge. You can use it anytime)</span>
               </p>
               <button
                 type="button"
