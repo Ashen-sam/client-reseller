@@ -134,11 +134,13 @@ export const api = createApi({
     getCategories: builder.query<{ categories: string[] }, void>({
       query: () => "api/categories",
       providesTags: ["Categories"],
+      keepUnusedDataFor: 900,
     }),
 
     getCurrencies: builder.query<{ currencies: string[] }, void>({
       query: () => "api/currencies",
       providesTags: ["Categories"],
+      keepUnusedDataFor: 900,
     }),
 
     getMe: builder.query<MeResponse | null, void>({
@@ -361,9 +363,11 @@ export const api = createApi({
           type: l.type || "product",
           status: l.status || "inStock",
           featured: Boolean(l.featured),
+          imageCount: typeof l.imageCount === "number" ? l.imageCount : undefined,
           images: (l.images || []).map(listingImageSrc),
         })),
       }),
+      keepUnusedDataFor: 180,
       providesTags: (result) =>
         result
           ? [

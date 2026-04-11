@@ -53,6 +53,8 @@ export interface Listing {
   category: string;
   featured?: boolean;
   images: string[];
+  /** Set on marketplace list API when images are capped for payload size. */
+  imageCount?: number;
   contact: {
     phone: string;
     whatsapp: string;

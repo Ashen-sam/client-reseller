@@ -28,6 +28,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const navigate = useNavigate();
   const isPending = listing.id.startsWith('optimistic-');
   const imgs = listing.images?.length ? listing.images : [];
+  const photoTotal = listing.imageCount ?? imgs.length;
   const listingType = listing.type || 'product';
   const listingStatus = listing.status || 'inStock';
   const inStock = listingStatus === 'inStock';
@@ -74,10 +75,10 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="ui-icon-label"><Eye size={12} />{listing.views} views</span>
           {' · '}
           <span className="ui-icon-label"><MousePointerClick size={12} />{listing.contactClicks} contacts</span>
-          {imgs.length > 1 && !isPending && (
+          {photoTotal > 1 && !isPending && (
             <span className="product-card__photos-hint">
               {' · '}
-              <span className="ui-icon-label"><Camera size={12} />{imgs.length} photos</span>
+              <span className="ui-icon-label"><Camera size={12} />{photoTotal} photos</span>
             </span>
           )}
         </p>

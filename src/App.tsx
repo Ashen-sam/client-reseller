@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSessionMeQuery } from './store/api';
 import { useAppDispatch } from './store/hooks';
@@ -9,12 +9,14 @@ import HomePage from './pages/HomePage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import ListingFormPage from './pages/ListingFormPage';
-import AdminPage from './pages/AdminPage';
-import BillingPage from './pages/BillingPage';
-import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import PageLoader from './components/PageLoader';
+
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ListingFormPage = lazy(() => import('./pages/ListingFormPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const BillingPage = lazy(() => import('./pages/BillingPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -58,7 +60,9 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <Suspense fallback={<PageLoader message="Loading dashboard…" />}>
+                <DashboardPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -66,7 +70,9 @@ export default function App() {
           path="/sell"
           element={
             <ProtectedRoute>
-              <ListingFormPage mode="create" />
+              <Suspense fallback={<PageLoader message="Loading form…" />}>
+                <ListingFormPage mode="create" />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -74,7 +80,9 @@ export default function App() {
           path="/listings/:id/edit"
           element={
             <ProtectedRoute>
-              <ListingFormPage mode="edit" />
+              <Suspense fallback={<PageLoader message="Loading form…" />}>
+                <ListingFormPage mode="edit" />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -82,7 +90,9 @@ export default function App() {
           path="/admin"
           element={
             <ProtectedRoute admin>
-              <AdminPage />
+              <Suspense fallback={<PageLoader message="Loading admin…" />}>
+                <AdminPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -90,7 +100,9 @@ export default function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfilePage />
+              <Suspense fallback={<PageLoader message="Loading profile…" />}>
+                <ProfilePage />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -98,7 +110,9 @@ export default function App() {
           path="/billing"
           element={
             <ProtectedRoute>
-              <BillingPage />
+              <Suspense fallback={<PageLoader message="Loading billing…" />}>
+                <BillingPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />
