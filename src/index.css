@@ -848,8 +848,40 @@ img {
 
 /* —— Marketplace hero —— */
 .marketplace-hero {
-  padding: 1.5rem 1.25rem 1.35rem;
-  margin-bottom: 1.75rem;
+  padding: 1rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+arketplace-hero__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.marketplace-hero__image {
+  flex-shrink: 0;
+  width: 340px;
+  display: none;
+  align-self: center;
+}
+
+@media (min-width: 768px) {
+  .marketplace-hero__image {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .marketplace-hero__image {
+    width: 400px;
+  }
+}
+
+.marketplace-hero__image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-lg);
+  object-fit: contain;
+  max-height: 380px;
 }
 
 @media (min-width: 768px) {
@@ -859,8 +891,14 @@ img {
 }
 
 .marketplace-hero__inner {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: space-between;
+}
+.marketplace-hero__content {
+  flex: 1;
+  min-width: 0;
 }
 
 .marketplace-hero__eyebrow {
@@ -1593,7 +1631,9 @@ img {
 /* Marketplace grid: denser, smaller cards (reseller-style) */
 .product-grid .product-card {
   border-radius: var(--radius);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.045), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.045),
+    0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .product-grid .product-card--interactive:hover:not(.product-card--pending) {
@@ -2718,8 +2758,16 @@ a.btn:hover {
 }
 
 .dashboard-overview__chip.is-active {
-  background: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
-  border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 10%,
+    var(--color-surface)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 35%,
+    var(--color-border)
+  );
   color: var(--color-primary-hover);
 }
 
@@ -2751,7 +2799,9 @@ a.btn:hover {
 .dashboard-stat-grid .stat-card {
   padding: 0.65rem 0.75rem;
   border-radius: var(--radius);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .dashboard-stat-grid .stat-card__label {
@@ -2848,7 +2898,8 @@ a.btn:hover {
 .dashboard-toolbar__search:focus-within {
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 25%, transparent);
+  box-shadow: 0 0 0 1px
+    color-mix(in oklab, var(--color-primary) 25%, transparent);
 }
 
 .dashboard-toolbar__search-icon {
@@ -3043,7 +3094,10 @@ a.btn:hover {
 @media (min-width: 768px) {
   .dashboard-table-head {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) 5.25rem 5.25rem minmax(200px, auto);
+    grid-template-columns: 48px minmax(0, 1fr) 5.25rem 5.25rem minmax(
+        200px,
+        auto
+      );
     gap: 0.65rem;
     padding: 0.25rem 0.55rem 0.35rem;
     margin-bottom: 0.15rem;
@@ -3056,7 +3110,10 @@ a.btn:hover {
   }
 
   .listing-row {
-    grid-template-columns: 48px minmax(0, 1fr) 5.25rem 5.25rem minmax(200px, auto);
+    grid-template-columns: 48px minmax(0, 1fr) 5.25rem 5.25rem minmax(
+        200px,
+        auto
+      );
     grid-template-rows: auto;
     align-items: center;
   }

@@ -6,6 +6,7 @@ import { useSeo } from '../lib/seo';
 import { useGetCategoriesQuery, useGetListingsQuery } from '../store/api';
 import ListingCard from '../components/ListingCard';
 import PostListingBanner from '../components/PostListingBanner';
+import image1 from '../../public/image.png';
 
 function catLabel(c: string) {
   return c.charAt(0).toUpperCase() + c.slice(1);
@@ -44,6 +45,7 @@ export default function HomePage() {
     sort !== 'latest' ||
     page > 1
   );
+
   useSeo({
     title: 'Marketplace',
     description:
@@ -55,53 +57,63 @@ export default function HomePage() {
     <div className="container">
       <section className="page-surface marketplace-hero" aria-labelledby="marketplace-heading">
         <div className="page-surface__inner marketplace-hero__inner">
-          <p className="marketplace-hero__eyebrow">Reseller marketplace</p>
-          <h1 id="marketplace-heading" className="marketplace-hero__title">
-            Discover products and services from independent sellers
-          </h1>
-          <p className="marketplace-hero__subtitle">
-            Shop by category, compare prices in the seller’s currency, and message them directly — the same flow you
-            know from leading storefronts, built for peer-to-peer sales.
-          </p>
-          <ul className="marketplace-hero__trust">
-            <li>Direct seller contact</li>
-            <li>Multi-photo listings</li>
-            <li>Featured & fresh inventory</li>
-          </ul>
-          <div className="marketplace-hero__topics">
-            <span className="marketplace-hero__topics-label">Browse topics</span>
-            <button
-              type="button"
-              className={`topic-chip${category === '' ? ' is-active' : ''}`}
-              onClick={() => {
-                setPage(1);
-                setCategory('');
-              }}
-            >
-              All
-            </button>
-            {topicCategories.map((c) => (
+
+          {/* Left content */}
+          <div className="marketplace-hero__content">
+            <p className="marketplace-hero__eyebrow">Reseller marketplace</p>
+            <h1 id="marketplace-heading" className="marketplace-hero__title">
+              Discover products and services from independent sellers
+            </h1>
+            <p className="marketplace-hero__subtitle">
+              Shop by category, compare prices in the seller's currency, and message them directly — the same flow you
+              know from leading storefronts, built for peer-to-peer sales.
+            </p>
+            <ul className="marketplace-hero__trust">
+              <li>Direct seller contact</li>
+              <li>Multi-photo listings</li>
+              <li>Featured & fresh inventory</li>
+            </ul>
+            <div className="marketplace-hero__topics">
+              <span className="marketplace-hero__topics-label">Browse topics</span>
               <button
-                key={c}
                 type="button"
-                className={`topic-chip${category === c ? ' is-active' : ''}`}
+                className={`topic-chip${category === '' ? ' is-active' : ''}`}
                 onClick={() => {
                   setPage(1);
-                  setCategory(c);
+                  setCategory('');
                 }}
               >
-                {catLabel(c)}
+                All
               </button>
-            ))}
+              {topicCategories.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`topic-chip${category === c ? ' is-active' : ''}`}
+                  onClick={() => {
+                    setPage(1);
+                    setCategory(c);
+                  }}
+                >
+                  {catLabel(c)}
+                </button>
+              ))}
+            </div>
+            <div className="marketplace-hero__actions">
+              <a href="#marketplace-browse" className="btn btn-primary">
+                <span className="ui-icon-label"><Sparkles size={16} />Browse products</span>
+              </a>
+              <Link to="/sell" className="btn btn-ghost">
+                <span className="ui-icon-label"><ArrowRight size={16} />List an item</span>
+              </Link>
+            </div>
           </div>
-          <div className="marketplace-hero__actions">
-            <a href="#marketplace-browse" className="btn btn-primary">
-              <span className="ui-icon-label"><Sparkles size={16} />Browse products</span>
-            </a>
-            <Link to="/sell" className="btn btn-ghost">
-              <span className="ui-icon-label"><ArrowRight size={16} />List an item</span>
-            </Link>
+
+          {/* Right image */}
+          <div className="marketplace-hero__image">
+            <img src={image1} alt="Marketplace" />
           </div>
+
         </div>
       </section>
 
