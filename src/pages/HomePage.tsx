@@ -38,11 +38,11 @@ export default function HomePage() {
 
   const hasNarrowFilters = Boolean(
     category ||
-      type ||
-      minPrice !== '' ||
-      maxPrice !== '' ||
-      sort !== 'latest' ||
-      page > 1
+    type ||
+    minPrice !== '' ||
+    maxPrice !== '' ||
+    sort !== 'latest' ||
+    page > 1
   );
   useSeo({
     title: 'Marketplace',

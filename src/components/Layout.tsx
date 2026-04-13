@@ -53,6 +53,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isAdmin = resolvedApiUser?.role === 'admin';
   const [logout, { isLoading: loggingOut }] = useLogoutMutation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
   const menuId = useId();
 
   useEffect(() => {
@@ -199,6 +200,37 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
       </header>
+
+      {/* Maintenance Banner — sits directly under header */}
+      {showBanner && (
+        <div style={{
+          background: '#f59e0b',
+          color: '#1a1a1a',
+          textAlign: 'center',
+          padding: '10px 16px',
+          fontSize: '14px',
+          fontWeight: 500,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '12px',
+        }}>
+          <span>🚧 We are currently under maintenance. Some features may be unavailable.</span>
+          <button
+            onClick={() => setShowBanner(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '18px',
+              lineHeight: 1,
+              color: '#1a1a1a',
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <div
         id={menuId}
